@@ -45,6 +45,11 @@ local function post(path, payload)
     return statusCode, body, raw
 end
 
+-- Report once when this loader starts, without delaying the GUI or key checks.
+task.spawn(function()
+    pcall(post, "/v1/client/start", { application_id = APPLICATION_ID, place_id = PLACE_ID })
+end)
+
 -- ============================================================================
 -- Look & feel
 -- ============================================================================
