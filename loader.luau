@@ -431,7 +431,7 @@ discordButton.MouseButton1Click:Connect(function()
 end)
 
 getKey.MouseButton1Click:Connect(function()
-    local target = WORKER_ORIGIN .. "/v1/linkvertise/start/" .. APPLICATION_ID .. "?place_id=" .. HttpService:UrlEncode(PLACE_ID)
+    local target = WORKER_ORIGIN .. "/v1/key/start/" .. APPLICATION_ID .. "?place_id=" .. HttpService:UrlEncode(PLACE_ID)
     if setclipboard and pcall(setclipboard, target) then
         setStatus("Key link copied. Open it in your browser to get your key.", "ok")
     else
