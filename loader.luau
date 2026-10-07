@@ -4,7 +4,7 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local CLIENT_VERSION = "roblox-gui/1.2"
+local CLIENT_VERSION = "roblox-gui/1.3"
 local REQUEST_ATTEMPTS = 4
 
 -- Retry transport exceptions/empty transport responses, with bounded backoff.
@@ -101,6 +101,42 @@ end
 if probeCode ~= 403 or probe.reason ~= "key_required" then
     error(tostring(probe.error or probe.reason or "Script was unavailable."), 0)
 end
+
+-- Executor workspace storage, scoped to this Roblox account and place. A saved
+-- key still goes through the server's normal verification on every launch.
+local KEY_FILE = "cookie-hub-key-" .. tostring(Players.LocalPlayer.UserId) .. "-" .. PLACE_ID .. ".txt"
+local function readSavedKey()
+    if type(readfile) ~= "function" then return nil end
+    local ok, value = pcall(readfile, KEY_FILE)
+    if not ok or type(value) ~= "string" then return nil end
+    local key = value:match("^%s*(.-)%s*$")
+    return key ~= "" and key or nil
+end
+
+local savedKey = readSavedKey()
+
+local function saveKey(key)
+    if type(writefile) ~= "function" then return false end
+    local ok = pcall(writefile, KEY_FILE, key)
+    if ok then savedKey = key end
+    return ok
+end
+
+local function clearSavedKey(key)
+    if key ~= savedKey then return end
+    savedKey = nil
+    if type(delfile) == "function" and pcall(delfile, KEY_FILE) then return end
+    -- Some executors expose writefile without delfile. An empty file is ignored.
+    if type(writefile) == "function" then pcall(writefile, KEY_FILE, "") end
+end
+
+local InvalidKeyReasons = {
+    key_not_found = true,
+    key_revoked = true,
+    key_expired = true,
+    fingerprint_mismatch = true,
+    fingerprint_already_claimed = true,
+}
 
 local Theme = {
     Card = Color3.fromRGB(22, 24, 36),
@@ -323,7 +359,7 @@ local keyBox = create("TextBox", {
     BackgroundColor3 = Theme.Field,
     PlaceholderText = "Paste your access key",
     PlaceholderColor3 = Color3.fromRGB(92, 100, 128),
-    Text = "",
+    Text = savedKey or "",
     TextColor3 = Theme.Text,
     Font = Enum.Font.GothamMedium,
     TextSize = 14,
@@ -501,7 +537,7 @@ local function setBusy(state)
 end
 
 local function verifyAndLoad()
-    if busy then return end
+    if busy or not screen.Parent then return end
 
     local key = keyBox.Text:match("^%s*(.-)%s*$")
     if key == "" then
@@ -521,13 +557,19 @@ local function verifyAndLoad()
         setStatus("Connection interrupted. Retrying verification (" .. attempt .. "/4)…", "working")
     end)
     if not ok or type(tokenResult) ~= "table" or code ~= 200 or not tokenResult.authorized or type(tokenResult.token) ~= "string" then
+        if ok and code == 403 and type(tokenResult) == "table" and InvalidKeyReasons[tokenResult.reason] then
+            clearSavedKey(key)
+            if keyBox.Text:match("^%s*(.-)%s*$") == key then keyBox.Text = "" end
+        end
         local reason = type(tokenResult) == "table" and (tokenResult.error or tokenResult.reason) or nil
         setStatus(tostring(reason or (ok and "Key was not accepted.") or code), "error")
         setBusy(false)
         return
     end
 
-    setStatus("Key accepted. Downloading script…", "working")
+    -- Save only after acceptance, even if the subsequent script download fails.
+    local saved = saveKey(key)
+    setStatus(saved and "Key accepted. Downloading script…" or "Key accepted. Saving unavailable; downloading…", "working")
 
     -- Send the short-lived token in JSON: this executor drops Body when Authorization is set.
     local loadedRequest, loadCode, result = pcall(post, "/v1/scripts/load/" .. HttpService:UrlEncode(PLACE_ID), { token = tokenResult.token }, function(attempt)
@@ -582,3 +624,10 @@ end)
 -- Intro animation
 tween(card, 0.25, { GroupTransparency = 0 })
 tween(scale, 0.25, { Scale = 1 })
+
+if savedKey then
+    setStatus("Checking saved key…", "working")
+    task.spawn(verifyAndLoad)
+elseif type(readfile) ~= "function" or type(writefile) ~= "function" then
+    setStatus("Enter your key. This executor cannot save keys between sessions.", "info")
+end
