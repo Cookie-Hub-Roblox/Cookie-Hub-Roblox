@@ -4,7 +4,7 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local CLIENT_VERSION = "roblox-gui/1.1"
+local CLIENT_VERSION = "roblox-gui/1.2"
 local REQUEST_ATTEMPTS = 4
 
 -- Retry transport exceptions/empty transport responses, with bounded backoff.
@@ -76,6 +76,32 @@ end)
 -- ============================================================================
 -- Look & feel
 -- ============================================================================
+-- Ask the server before constructing any key UI. Only the server's current
+-- per-place policy can grant keyless access; a local flag cannot unlock a game.
+local probeOk, probeCode, probe = pcall(post, "/v1/scripts/load/" .. HttpService:UrlEncode(PLACE_ID), {
+    place_id = PLACE_ID,
+    client_version = CLIENT_VERSION,
+})
+if not probeOk then error(tostring(probeCode), 0) end
+if probeCode == 200 and probe.authorized == true and probe.keyless == true and type(probe.source) == "string" then
+    local compiled, payload, compileErr = pcall(loadstring, probe.source, "=CookieHub/Place/" .. PLACE_ID)
+    if not compiled or type(payload) ~= "function" then
+        error("Downloaded script could not compile: " .. tostring(compiled and compileErr or payload), 0)
+    end
+    local startupState = { state = "starting" }
+    -- A non-secret label supports existing payloads that require a nonempty Key.
+    -- Their /v1/validate recheck still uses the server's actual keyless setting.
+    getgenv().ScriptAccess = { Key = "keyless", Keyless = true, Fingerprint = installationId(), StartupState = startupState }
+    local ran, runErr = pcall(payload)
+    getgenv().ScriptAccess = nil
+    if not ran then error("Script failed: " .. tostring(runErr), 0) end
+    if startupState.state == "failed" then error(startupState.reason or "Place script stopped during initialization.", 0) end
+    return
+end
+if probeCode ~= 403 or probe.reason ~= "key_required" then
+    error(tostring(probe.error or probe.reason or "Script was unavailable."), 0)
+end
+
 local Theme = {
     Card = Color3.fromRGB(22, 24, 36),
     CardDark = Color3.fromRGB(15, 16, 25),
@@ -459,7 +485,7 @@ discordButton.MouseButton1Click:Connect(function()
 end)
 
 getKey.MouseButton1Click:Connect(function()
-    local target = WORKER_ORIGIN .. "/games/" .. HttpService:UrlEncode(PLACE_ID) .. "/key"
+    local target = WORKER_ORIGIN .. "/games/" .. HttpService:UrlEncode(PLACE_ID)
     if setclipboard and pcall(setclipboard, target) then
         setStatus("Key link copied. Open it in your browser to get your key.", "ok")
     else
