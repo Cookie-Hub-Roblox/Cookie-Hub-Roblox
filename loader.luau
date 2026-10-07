@@ -4,7 +4,7 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local CLIENT_VERSION = "roblox-gui/1.3"
+local CLIENT_VERSION = "roblox-gui/1.4"
 local REQUEST_ATTEMPTS = 4
 
 -- Retry transport exceptions/empty transport responses, with bounded backoff.
@@ -104,7 +104,8 @@ end
 
 -- Executor workspace storage, scoped to this Roblox account and place. A saved
 -- key still goes through the server's normal verification on every launch.
-local KEY_FILE = "cookie-hub-key-" .. tostring(Players.LocalPlayer.UserId) .. "-" .. PLACE_ID .. ".txt"
+local KEY_FOLDER = "cookie-hub"
+local KEY_FILE = KEY_FOLDER .. "/key-" .. tostring(Players.LocalPlayer.UserId) .. "-" .. PLACE_ID .. ".txt"
 local function readSavedKey()
     if type(readfile) ~= "function" then return nil end
     local ok, value = pcall(readfile, KEY_FILE)
@@ -117,6 +118,8 @@ local savedKey = readSavedKey()
 
 local function saveKey(key)
     if type(writefile) ~= "function" then return false end
+    -- Existing folders may make makefolder throw; the write determines success.
+    if type(makefolder) == "function" then pcall(makefolder, KEY_FOLDER) end
     local ok = pcall(writefile, KEY_FILE, key)
     if ok then savedKey = key end
     return ok
