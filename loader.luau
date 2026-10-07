@@ -4,38 +4,28 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local DEBUG_BUILD = "2026-10-07.verbose-1"
-local debugStarted = os.clock()
-local debugSecrets = {}
-local debugLines = {}
-if type(getgenv) == "function" then getgenv().CookieHubDebugLog = debugLines end
+local CLIENT_VERSION = "roblox-gui/1.1"
+local REQUEST_ATTEMPTS = 4
 
-local function rememberSecret(value)
-    if type(value) == "string" and value ~= "" then table.insert(debugSecrets, value) end
-end
-
-local function safeDebug(value)
-    local text = tostring(value)
-    for _, secret in ipairs(debugSecrets) do
-        text = text:gsub(secret:gsub("(%W)", "%%%1"), function() return "[redacted]" end)
+-- Retry transport exceptions/empty transport responses, with bounded backoff.
+-- HTTP error responses are returned normally, so rejected keys are not retried.
+local function requestWithRetry(send, valid, onRetry)
+    for attempt = 1, REQUEST_ATTEMPTS do
+        local ok, response = pcall(send)
+        if ok and valid(response) then return response end
+        if attempt < REQUEST_ATTEMPTS then
+            local delay = 2 ^ (attempt - 1)
+            if onRetry then onRetry(attempt + 1, delay) end
+            task.wait(delay)
+        end
     end
-    return text
+    error("HTTP request failed after 4 attempts. Check your connection and try again.", 0)
 end
 
-local function trace(message)
-    local text = tostring(message)
-    if debug and type(debug.traceback) == "function" then text = debug.traceback(text, 2) end
-    return safeDebug(text)
+local function validHttpResponse(response)
+    return type(response) == "table" and (tonumber(response.StatusCode or response.Status or response.status_code) or 0) > 0
 end
 
-local function debugLog(stage, message, failure)
-    local line = string.format("[CookieHub:Loader][%s][+%.3fs] %s", stage, os.clock() - debugStarted, safeDebug(message))
-    table.insert(debugLines, line)
-    if #debugLines > 500 then table.remove(debugLines, 1) end
-    if failure then warn(line) else print(line) end
-end
-
-debugLog("bootstrap", "build=" .. DEBUG_BUILD .. " place=" .. tostring(game.PlaceId))
 local WORKER_ORIGIN = "https://script-access-worker.script-access-worker.workers.dev"
 local PLACE_ID = tostring(game.PlaceId) -- the worker picks the script for this place
 local DISCORD_URL = "http://dsc.gg/cookie-hub-rblx"
@@ -46,10 +36,10 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
 local requestFn = request or http_request or (syn and syn.request)
-debugLog("capabilities", "request=" .. type(requestFn) .. " loadstring=" .. type(loadstring) .. " getgenv=" .. type(getgenv))
 assert(requestFn, "This loader needs an HTTP request API.")
 assert(loadstring, "This loader needs loadstring enabled.")
 assert(getgenv, "This loader needs getgenv to hand the key to the place script.")
+getgenv().CookieHubDebugLog = nil -- discard the previous diagnostic build's buffer
 
 local function installationId()
     -- Keep this stable if your executor exposes a persistent identifier. This sample
@@ -57,15 +47,10 @@ local function installationId()
     return getgenv().ScriptAccessInstallationId or ("roblox-" .. Players.LocalPlayer.UserId)
 end
 
-local function post(path, payload)
-    rememberSecret(payload.key)
-    rememberSecret(payload.fingerprint)
-    rememberSecret(payload.token)
+local function post(path, payload, onRetry)
     local encoded = HttpService:JSONEncode(payload)
-    local started = os.clock()
     local requestId = "loader-" .. HttpService:GenerateGUID(false)
-    debugLog("http.begin", "POST " .. path .. " request_id=" .. requestId .. " bytes=" .. #encoded)
-    local called, response = xpcall(function() return requestFn({
+    local response = requestWithRetry(function() return requestFn({
         Url = WORKER_ORIGIN .. path,
         Method = "POST",
         Headers = { ["Content-Type"] = "application/json", ["X-Request-ID"] = requestId },
@@ -73,29 +58,19 @@ local function post(path, payload)
         -- request shims only inspect lowercase body. Supplying both is harmless.
         Body = encoded,
         body = encoded,
-    }) end, trace)
-    if not called or type(response) ~= "table" then
-        debugLog("http.failed", path .. " elapsed=" .. string.format("%.3f", os.clock() - started) .. " response=" .. tostring(response), true)
-        error("HTTP request failed for " .. path .. ": " .. safeDebug(response), 0)
-    end
+    }) end, validHttpResponse, onRetry)
     local statusCode = tonumber(response.StatusCode or response.Status or response.status_code) or 0
     local raw = response.Body or response.body or ""
-    debugLog("http.response", path .. " status=" .. statusCode .. " body_type=" .. type(raw) .. " bytes=" .. (type(raw) == "string" and #raw or 0) .. " elapsed=" .. string.format("%.3f", os.clock() - started))
     local decoded, body = pcall(HttpService.JSONDecode, HttpService, raw)
     if not decoded or type(body) ~= "table" then
-        local preview = safeDebug(raw):sub(1, 300)
-        debugLog("http.decode_failed", path .. " error=" .. safeDebug(body) .. " preview=" .. preview, true)
-        return statusCode, { error = "Non-JSON response", raw = preview }, raw
+        return statusCode, { error = "The service returned an unreadable response." }, raw
     end
-    rememberSecret(body.token)
-    debugLog("http.json", path .. " authorized=" .. tostring(body.authorized) .. " reason=" .. tostring(body.reason or body.error or "none") .. " request_id=" .. tostring(body.request_id or requestId) .. " source_bytes=" .. (type(body.source) == "string" and #body.source or 0))
     return statusCode, body, raw
 end
 
 -- Report once when this loader starts, without delaying the GUI or key checks.
 task.spawn(function()
-    local ok, result = xpcall(function() return post("/v1/client/start", { place_id = PLACE_ID, client_version = DEBUG_BUILD }) end, trace)
-    debugLog("client.start", "reported=" .. tostring(ok) .. " result=" .. tostring(result), not ok)
+    pcall(post, "/v1/client/start", { place_id = PLACE_ID, client_version = CLIENT_VERSION })
 end)
 
 -- ============================================================================
@@ -166,7 +141,6 @@ end
 -- Window
 -- ============================================================================
 local playerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
-debugLog("ui", "PlayerGui found; building loader window")
 
 local screen = create("ScreenGui", {
     Name = "ScriptAccess",
@@ -394,7 +368,6 @@ local StatusColors = {
 }
 
 local function setStatus(text, kind)
-    debugLog("ui.status", tostring(kind or "info") .. " " .. text, kind == "error")
     local color = StatusColors[kind or "info"]
     statusLabel.Text = text
     statusLabel.TextColor3 = (kind == "info" or kind == nil) and Theme.Muted or color
@@ -502,7 +475,7 @@ local function setBusy(state)
 end
 
 local function verifyAndLoad()
-    if busy then debugLog("verify.ignored", "A verification is already in progress") return end
+    if busy then return end
 
     local key = keyBox.Text:match("^%s*(.-)%s*$")
     if key == "" then
@@ -512,76 +485,62 @@ local function verifyAndLoad()
 
     setBusy(true)
     setStatus("Checking key…", "working")
-    local startupState = { state = "starting", stage = "token request" }
-    local attemptStarted = os.clock()
-    local watchdogActive = true
-    task.spawn(function()
-        while watchdogActive do
-            task.wait(15)
-            if watchdogActive then debugLog("watchdog", "Still waiting: " .. startupState.stage .. " elapsed=" .. string.format("%.1f", os.clock() - attemptStarted) .. "s", true) end
-        end
-    end)
-    local function failed(stage, reason)
-        watchdogActive = false
-        startupState.stage = stage
-        debugLog(stage, reason, true)
-        setStatus(safeDebug(reason), "error")
-        setBusy(false)
-    end
 
     local ok, code, tokenResult = pcall(post, "/v1/token", {
         key = key,
         fingerprint = installationId(),
         place_id = PLACE_ID,
-        client_version = DEBUG_BUILD,
-    })
+        client_version = CLIENT_VERSION,
+    }, function(attempt)
+        setStatus("Connection interrupted. Retrying verification (" .. attempt .. "/4)…", "working")
+    end)
     if not ok or type(tokenResult) ~= "table" or code ~= 200 or not tokenResult.authorized or type(tokenResult.token) ~= "string" then
         local reason = type(tokenResult) == "table" and (tokenResult.error or tokenResult.reason) or nil
-        failed("token.failed", tostring(reason or (ok and "Key was not accepted.") or code))
+        setStatus(tostring(reason or (ok and "Key was not accepted.") or code), "error")
+        setBusy(false)
         return
     end
 
     setStatus("Key accepted. Downloading script…", "working")
-    startupState.stage = "script download"
-    debugLog("token.accepted", "expires_at=" .. tostring(tokenResult.expires_at))
 
     -- Send the short-lived token in JSON: this executor drops Body when Authorization is set.
-    local loadedRequest, loadCode, result = pcall(post, "/v1/scripts/load/" .. HttpService:UrlEncode(PLACE_ID), { token = tokenResult.token })
+    local loadedRequest, loadCode, result = pcall(post, "/v1/scripts/load/" .. HttpService:UrlEncode(PLACE_ID), { token = tokenResult.token }, function(attempt)
+        setStatus("Connection interrupted. Retrying script download (" .. attempt .. "/4)…", "working")
+    end)
     if not loadedRequest or type(result) ~= "table" or loadCode ~= 200 or not result.authorized or type(result.source) ~= "string" then
-        local reason = loadedRequest and type(result) == "table" and (result.error or result.reason or "Script was unavailable.") or "Script request failed."
-        failed("download.failed", loadedRequest and tostring(reason) or tostring(loadCode))
+        local reason = loadedRequest and type(result) == "table" and (result.error or result.reason or "Script was unavailable.") or tostring(loadCode)
+        setStatus(tostring(reason), "error")
+        setBusy(false)
         return
     end
 
-    startupState.stage = "script compilation"
-    debugLog("compile.begin", "bytes=" .. #result.source .. " updated_at=" .. tostring(result.updated_at))
     local compiled, payload, compileErr = pcall(loadstring, result.source, "=CookieHub/Place/" .. PLACE_ID)
     if not compiled or type(payload) ~= "function" then
-        failed("compile.failed", "Downloaded script could not compile: " .. tostring(compiled and compileErr or payload))
+        setStatus("Downloaded script could not compile: " .. tostring(compiled and compileErr or payload), "error")
+        setBusy(false)
         return
     end
 
     setStatus("Verified. Loading Cookie Hub…", "ok")
-    debugLog("compile.ok", "Executing downloaded chunk")
-    startupState.stage = "payload entry"
 
     -- One-time handoff: the payload reads and clears this immediately, then
     -- re-validates the key itself. We clear it again afterwards in case it never ran.
-    getgenv().ScriptAccess = { Key = key, Fingerprint = installationId(), DebugState = startupState }
-    local ran, runErr = xpcall(payload, trace)
+    local startupState = { state = "starting" }
+    getgenv().ScriptAccess = { Key = key, Fingerprint = installationId(), StartupState = startupState }
+    local ran, runErr = pcall(payload)
     getgenv().ScriptAccess = nil
-    watchdogActive = false
-    debugLog("execute.return", "success=" .. tostring(ran) .. " state=" .. startupState.state .. " last_stage=" .. startupState.stage .. " elapsed=" .. string.format("%.3f", os.clock() - attemptStarted), not ran)
 
     if not ran then
-        failed("execute.failed", "Script failed: " .. tostring(runErr))
+        setStatus("Script failed: " .. tostring(runErr), "error")
+        setBusy(false)
         return
     end
+
     if startupState.state == "failed" then
-        failed("startup.failed", startupState.reason or "Place script stopped during initialization.")
+        setStatus(startupState.reason or "Place script stopped during initialization.", "error")
+        setBusy(false)
         return
     end
-    debugLog("complete", "Payload finished initialization; closing loader")
 
     closeWindow()
 end
@@ -597,4 +556,3 @@ end)
 -- Intro animation
 tween(card, 0.25, { GroupTransparency = 0 })
 tween(scale, 0.25, { Scale = 1 })
-debugLog("ui.ready", "Loader window ready; waiting for Verify & load")
