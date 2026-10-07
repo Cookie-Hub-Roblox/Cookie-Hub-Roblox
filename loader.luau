@@ -4,7 +4,6 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local APPLICATION_ID = "app_f29d63a107b84ec592"
 local WORKER_ORIGIN = "https://script-access-worker.script-access-worker.workers.dev"
 local PLACE_ID = tostring(game.PlaceId) -- the worker picks the script for this place
 local DISCORD_URL = "http://dsc.gg/cookie-hub-rblx"
@@ -47,7 +46,7 @@ end
 
 -- Report once when this loader starts, without delaying the GUI or key checks.
 task.spawn(function()
-    pcall(post, "/v1/client/start", { application_id = APPLICATION_ID, place_id = PLACE_ID })
+    pcall(post, "/v1/client/start", { place_id = PLACE_ID })
 end)
 
 -- ============================================================================
@@ -436,7 +435,7 @@ discordButton.MouseButton1Click:Connect(function()
 end)
 
 getKey.MouseButton1Click:Connect(function()
-    local target = WORKER_ORIGIN .. "/v1/key/start/" .. APPLICATION_ID .. "?place_id=" .. HttpService:UrlEncode(PLACE_ID)
+    local target = WORKER_ORIGIN .. "/games/" .. HttpService:UrlEncode(PLACE_ID) .. "/key"
     if setclipboard and pcall(setclipboard, target) then
         setStatus("Key link copied. Open it in your browser to get your key.", "ok")
     else
@@ -464,7 +463,6 @@ local function verifyAndLoad()
     setStatus("Checking key…", "working")
 
     local ok, code, tokenResult = pcall(post, "/v1/token", {
-        application_id = APPLICATION_ID,
         key = key,
         fingerprint = installationId(),
         place_id = PLACE_ID,
