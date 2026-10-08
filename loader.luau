@@ -4,8 +4,30 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local CLIENT_VERSION = "roblox-gui/1.5"
+local CLIENT_VERSION = "roblox-gui/1.6"
 local REQUEST_ATTEMPTS = 4
+
+assert(getgenv, "This loader needs getgenv to hand the key to the place script.")
+local shared = getgenv()
+local previous = shared.CookieHubLoaderState
+if type(previous) == "table" and (previous.state == "starting" or previous.state == "waiting_key") then
+    return -- A launch already owns initialization, including asynchronous startup.
+end
+local loaderState = { state = "starting" }
+shared.CookieHubLoaderState = loaderState
+if type(previous) == "table" and type(previous.retire) == "function" then
+    pcall(previous.retire)
+end
+-- Claim ownership before retiring a stale window: its exit animation can yield.
+if type(shared.CookieHubLoaderWindow) == "function" then
+    pcall(shared.CookieHubLoaderWindow)
+end
+local function releaseLoader()
+    if shared.CookieHubLoaderState == loaderState then shared.CookieHubLoaderState = nil end
+end
+
+-- Catch top-level setup failures as well as the explicit request/payload failures.
+local loaderOk, loaderErr = pcall(function()
 
 -- Retry transport exceptions/empty transport responses, with bounded backoff.
 -- HTTP error responses are returned normally, so rejected keys are not retried.
@@ -39,7 +61,6 @@ local UserInputService = game:GetService("UserInputService")
 local requestFn = request or http_request or (syn and syn.request)
 assert(requestFn, "This loader needs an HTTP request API.")
 assert(loadstring, "This loader needs loadstring enabled.")
-assert(getgenv, "This loader needs getgenv to hand the key to the place script.")
 getgenv().CookieHubDebugLog = nil -- discard the previous diagnostic build's buffer
 
 local function installationId()
@@ -48,7 +69,106 @@ local function installationId()
     return getgenv().ScriptAccessInstallationId or ("roblox-" .. Players.LocalPlayer.UserId)
 end
 
-local function post(path, payload, onRetry)
+local post
+local reportedFailures = {}
+local analyticsQueues = {}
+local function analyticsAvailable(analytics)
+    return type(analytics) == "table" and type(analytics.session_id) == "string" and type(analytics.session_token) == "string"
+end
+local function reportEvent(analytics, event, text)
+    if not analyticsAvailable(analytics) then return end
+    local queue = analyticsQueues[analytics.session_id]
+    if not queue then
+        queue = { events = {}, running = false }
+        analyticsQueues[analytics.session_id] = queue
+    end
+    -- Keep terminal lifecycle events even if a slow connection accumulates
+    -- heartbeats. The queue holds at most 32 pending events plus one in flight.
+    if #queue.events >= 32 then
+        if event == "heartbeat" then return end
+        local removeIndex = 1
+        for index, pendingEvent in ipairs(queue.events) do
+            if pendingEvent.event == "heartbeat" then removeIndex = index; break end
+        end
+        table.remove(queue.events, removeIndex)
+    end
+    table.insert(queue.events, { id = HttpService:GenerateGUID(false), event = event, text = text })
+    if queue.running then return end
+    queue.running = true
+    -- One background worker preserves success -> heartbeat -> unload order,
+    -- including when a reload happens before the success request completes.
+    task.spawn(function()
+        while #queue.events > 0 do
+            local pendingEvent = table.remove(queue.events, 1)
+            pcall(post, "/v1/analytics/events", {
+                session_id = analytics.session_id,
+                session_token = analytics.session_token,
+                events = { pendingEvent },
+            })
+        end
+        queue.running = false
+        analyticsQueues[analytics.session_id] = nil
+    end)
+end
+local function reportLoadFailure(analytics, reason)
+    if type(analytics) ~= "table" or type(analytics.session_id) ~= "string" or type(analytics.session_token) ~= "string" then return end
+    if reportedFailures[analytics.session_id] then return end
+    reportedFailures[analytics.session_id] = true
+    reportEvent(analytics, "load_failed", reason)
+end
+
+-- Observe asynchronous payload startup without polling or blocking the loader.
+-- Keep state in a backing table so every assignment (including ready -> unloaded)
+-- reaches the observer, rather than only the first write to a Lua table field.
+local function startupTracker(analytics)
+    local values = { state = "starting" }
+    local observer, failureReported, successReported, unloadReported, retired
+    local function retire()
+        retired = true
+        if successReported and not unloadReported and values.analyticsManaged ~= true then
+            unloadReported = true
+            reportEvent(analytics, "unload")
+        end
+    end
+    loaderState.retire = retire
+    local function heartbeat()
+        if retired or values.state ~= "ready" or values.analyticsManaged == true or shared.CookieHubLoaderState ~= loaderState then return end
+        reportEvent(analytics, "heartbeat")
+        task.delay(30, heartbeat)
+    end
+    local function changed()
+        if values.state == "failed" then
+            releaseLoader()
+            if not failureReported then
+                failureReported = true
+                reportLoadFailure(analytics, "initialization_failed")
+            end
+        elseif values.state == "unloaded" then
+            retire()
+            releaseLoader()
+        elseif values.state == "ready" and shared.CookieHubLoaderState == loaderState then
+            loaderState.state = "ready"
+            -- New payloads own their telemetry; older places still get CCU and
+            -- successful-run counts through this loader lifecycle fallback.
+            if not successReported and values.analyticsManaged ~= true and analyticsAvailable(analytics) then
+                successReported = true
+                reportEvent(analytics, "load_success")
+                task.delay(30, heartbeat)
+            end
+        end
+        if observer then observer(values.state, values.reason) end
+    end
+    local state = setmetatable({}, {
+        __index = values,
+        __newindex = function(_, key, value)
+            values[key] = value
+            if key == "state" then changed() end
+        end,
+    })
+    return state, function(callback) observer = callback; changed() end
+end
+
+post = function(path, payload, onRetry)
     local encoded = HttpService:JSONEncode(payload)
     local requestId = "loader-" .. HttpService:GenerateGUID(false)
     local response = requestWithRetry(function() return requestFn({
@@ -88,21 +208,26 @@ if not probeOk then error(tostring(probeCode), 0) end
 if probeCode == 200 and probe.authorized == true and probe.keyless == true and type(probe.source) == "string" then
     local compiled, payload, compileErr = pcall(loadstring, probe.source, "=CookieHub/Place/" .. PLACE_ID)
     if not compiled or type(payload) ~= "function" then
+        reportLoadFailure(probe.analytics, "compile_failed")
         error("Downloaded script could not compile: " .. tostring(compiled and compileErr or payload), 0)
     end
-    local startupState = { state = "starting" }
+    local startupState = startupTracker(probe.analytics)
     -- A non-secret label supports existing payloads that require a nonempty Key.
     -- Their /v1/validate recheck still uses the server's actual keyless setting.
-    getgenv().ScriptAccess = { Key = "keyless", Keyless = true, Fingerprint = installationId(), PlayerId = PLAYER_ID, BuildChannel = probe.build_channel or "production", StartupState = startupState }
+    getgenv().ScriptAccess = { Key = "keyless", Keyless = true, Fingerprint = installationId(), PlayerId = PLAYER_ID, BuildChannel = probe.build_channel or "production", StartupState = startupState, Analytics = probe.analytics }
     local ran, runErr = pcall(payload)
     getgenv().ScriptAccess = nil
-    if not ran then error("Script failed: " .. tostring(runErr), 0) end
+    if not ran then
+        reportLoadFailure(probe.analytics, "runtime_failed")
+        error("Script failed: " .. tostring(runErr), 0)
+    end
     if startupState.state == "failed" then error(startupState.reason or "Place script stopped during initialization.", 0) end
     return
 end
 if probeCode ~= 403 or probe.reason ~= "key_required" then
     error(tostring(probe.error or probe.reason or "Script was unavailable."), 0)
 end
+loaderState.state = "waiting_key"
 
 -- Executor workspace storage, scoped to this Roblox account and place. A saved
 -- key still goes through the server's normal verification on every launch.
@@ -477,7 +602,13 @@ end)
 -- ============================================================================
 local connections = {}
 
-local function closeWindow()
+local function closeWindow(preserveStartup)
+    if not preserveStartup then
+        loaderState.cancelled = true
+        releaseLoader()
+    end
+    if shared.CookieHubLoaderWindow == closeWindow then shared.CookieHubLoaderWindow = nil end
+    if not screen.Parent then return end
     for _, connection in ipairs(connections) do
         connection:Disconnect()
     end
@@ -488,7 +619,8 @@ local function closeWindow()
     screen:Destroy()
 end
 
-closeButton.MouseButton1Click:Connect(closeWindow)
+shared.CookieHubLoaderWindow = closeWindow
+closeButton.MouseButton1Click:Connect(function() closeWindow() end)
 
 -- Drag the card by its header (mouse and touch)
 do
@@ -536,6 +668,7 @@ end)
 
 local function setBusy(state)
     busy = state
+    if not state then releaseLoader() end
     verify.Text = state and "Checking…" or "Verify & load"
     tween(verify, 0.12, { BackgroundColor3 = state and Theme.ButtonHover or Theme.Accent })
     verify.TextColor3 = state and Theme.Muted or Theme.AccentText
@@ -543,6 +676,8 @@ end
 
 local function verifyAndLoad()
     if busy or not screen.Parent then return end
+    local active = shared.CookieHubLoaderState
+    if active and active ~= loaderState and (active.state == "starting" or active.state == "waiting_key") then return end
 
     local key = keyBox.Text:match("^%s*(.-)%s*$")
     if key == "" then
@@ -550,6 +685,9 @@ local function verifyAndLoad()
         return
     end
 
+    shared.CookieHubLoaderState = loaderState
+    loaderState.state = "starting"
+    loaderState.cancelled = false
     setBusy(true)
     setStatus("Checking key…", "working")
 
@@ -562,6 +700,7 @@ local function verifyAndLoad()
     }, function(attempt)
         setStatus("Connection interrupted. Retrying verification (" .. attempt .. "/4)…", "working")
     end)
+    if loaderState.cancelled or not screen.Parent then return end
     if not ok or type(tokenResult) ~= "table" or code ~= 200 or not tokenResult.authorized or type(tokenResult.token) ~= "string" then
         if ok and code == 403 and type(tokenResult) == "table" and InvalidKeyReasons[tokenResult.reason] then
             clearSavedKey(key)
@@ -578,9 +717,10 @@ local function verifyAndLoad()
     setStatus(saved and "Key accepted. Downloading script…" or "Key accepted. Saving unavailable; downloading…", "working")
 
     -- Send the short-lived token in JSON: this executor drops Body when Authorization is set.
-    local loadedRequest, loadCode, result = pcall(post, "/v1/scripts/load/" .. HttpService:UrlEncode(PLACE_ID), { token = tokenResult.token, player_id = PLAYER_ID }, function(attempt)
+    local loadedRequest, loadCode, result = pcall(post, "/v1/scripts/load/" .. HttpService:UrlEncode(PLACE_ID), { token = tokenResult.token, player_id = PLAYER_ID, client_version = CLIENT_VERSION }, function(attempt)
         setStatus("Connection interrupted. Retrying script download (" .. attempt .. "/4)…", "working")
     end)
+    if loaderState.cancelled or not screen.Parent then return end
     if not loadedRequest or type(result) ~= "table" or loadCode ~= 200 or not result.authorized or type(result.source) ~= "string" then
         local reason = loadedRequest and type(result) == "table" and (result.error or result.reason or "Script was unavailable.") or tostring(loadCode)
         setStatus(tostring(reason), "error")
@@ -590,6 +730,7 @@ local function verifyAndLoad()
 
     local compiled, payload, compileErr = pcall(loadstring, result.source, "=CookieHub/Place/" .. PLACE_ID)
     if not compiled or type(payload) ~= "function" then
+        reportLoadFailure(result.analytics, "compile_failed")
         setStatus("Downloaded script could not compile: " .. tostring(compiled and compileErr or payload), "error")
         setBusy(false)
         return
@@ -599,31 +740,46 @@ local function verifyAndLoad()
 
     -- One-time handoff: the payload reads and clears this immediately, then
     -- re-validates the key itself. We clear it again afterwards in case it never ran.
-    local startupState = { state = "starting" }
-    getgenv().ScriptAccess = { Key = key, Fingerprint = installationId(), PlayerId = PLAYER_ID, BuildChannel = result.build_channel or "production", StartupState = startupState }
+    local startupState, observeStartup = startupTracker(result.analytics)
+    getgenv().ScriptAccess = { Key = key, Fingerprint = installationId(), PlayerId = PLAYER_ID, BuildChannel = result.build_channel or "production", StartupState = startupState, Analytics = result.analytics }
     local ran, runErr = pcall(payload)
     getgenv().ScriptAccess = nil
 
     if not ran then
+        reportLoadFailure(result.analytics, "runtime_failed")
         setStatus("Script failed: " .. tostring(runErr), "error")
         setBusy(false)
         return
     end
 
-    if startupState.state == "failed" then
-        setStatus(startupState.reason or "Place script stopped during initialization.", "error")
-        setBusy(false)
-        return
-    end
-
-    closeWindow()
+    observeStartup(function(state, reason)
+        if loaderState.cancelled or not screen.Parent then return end
+        if state == "failed" or state == "unloaded" then
+            setStatus(reason or "Place script stopped during initialization.", "error")
+            setBusy(false)
+        elseif state == "ready" then
+            closeWindow(true)
+        end
+    end)
 end
 
-verify.MouseButton1Click:Connect(verifyAndLoad)
+local function tryVerifyAndLoad()
+    local ok, failure = pcall(verifyAndLoad)
+    if not ok then
+        shared.ScriptAccess = nil
+        releaseLoader()
+        if screen.Parent then
+            setStatus("Loader failed: " .. tostring(failure), "error")
+            setBusy(false)
+        end
+    end
+end
+
+verify.MouseButton1Click:Connect(tryVerifyAndLoad)
 keyBox.FocusLost:Connect(function(enterPressed)
     tween(keyStroke, 0.15, { Color = Theme.Stroke })
     if enterPressed then
-        verifyAndLoad()
+        tryVerifyAndLoad()
     end
 end)
 
@@ -633,7 +789,13 @@ tween(scale, 0.25, { Scale = 1 })
 
 if savedKey then
     setStatus("Checking saved key…", "working")
-    task.spawn(verifyAndLoad)
+    task.spawn(tryVerifyAndLoad)
 elseif type(readfile) ~= "function" or type(writefile) ~= "function" then
     setStatus("Enter your key. This executor cannot save keys between sessions.", "info")
+end
+end)
+if not loaderOk then
+    releaseLoader()
+    shared.ScriptAccess = nil
+    error(loaderErr, 0)
 end
