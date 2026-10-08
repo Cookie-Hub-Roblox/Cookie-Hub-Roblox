@@ -4,7 +4,7 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local CLIENT_VERSION = "roblox-gui/1.4"
+local CLIENT_VERSION = "roblox-gui/1.5"
 local REQUEST_ATTEMPTS = 4
 
 -- Retry transport exceptions/empty transport responses, with bounded backoff.
@@ -32,6 +32,7 @@ local DISCORD_URL = "http://dsc.gg/cookie-hub-rblx"
 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
+local PLAYER_ID = tostring(Players.LocalPlayer.UserId)
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
@@ -70,7 +71,7 @@ end
 
 -- Report once when this loader starts, without delaying the GUI or key checks.
 task.spawn(function()
-    pcall(post, "/v1/client/start", { place_id = PLACE_ID, client_version = CLIENT_VERSION })
+    pcall(post, "/v1/client/start", { place_id = PLACE_ID, player_id = PLAYER_ID, client_version = CLIENT_VERSION })
 end)
 
 -- ============================================================================
@@ -80,6 +81,7 @@ end)
 -- per-place policy can grant keyless access; a local flag cannot unlock a game.
 local probeOk, probeCode, probe = pcall(post, "/v1/scripts/load/" .. HttpService:UrlEncode(PLACE_ID), {
     place_id = PLACE_ID,
+    player_id = PLAYER_ID,
     client_version = CLIENT_VERSION,
 })
 if not probeOk then error(tostring(probeCode), 0) end
@@ -91,7 +93,7 @@ if probeCode == 200 and probe.authorized == true and probe.keyless == true and t
     local startupState = { state = "starting" }
     -- A non-secret label supports existing payloads that require a nonempty Key.
     -- Their /v1/validate recheck still uses the server's actual keyless setting.
-    getgenv().ScriptAccess = { Key = "keyless", Keyless = true, Fingerprint = installationId(), StartupState = startupState }
+    getgenv().ScriptAccess = { Key = "keyless", Keyless = true, Fingerprint = installationId(), PlayerId = PLAYER_ID, BuildChannel = probe.build_channel or "production", StartupState = startupState }
     local ran, runErr = pcall(payload)
     getgenv().ScriptAccess = nil
     if not ran then error("Script failed: " .. tostring(runErr), 0) end
@@ -555,6 +557,7 @@ local function verifyAndLoad()
         key = key,
         fingerprint = installationId(),
         place_id = PLACE_ID,
+        player_id = PLAYER_ID,
         client_version = CLIENT_VERSION,
     }, function(attempt)
         setStatus("Connection interrupted. Retrying verification (" .. attempt .. "/4)…", "working")
@@ -575,7 +578,7 @@ local function verifyAndLoad()
     setStatus(saved and "Key accepted. Downloading script…" or "Key accepted. Saving unavailable; downloading…", "working")
 
     -- Send the short-lived token in JSON: this executor drops Body when Authorization is set.
-    local loadedRequest, loadCode, result = pcall(post, "/v1/scripts/load/" .. HttpService:UrlEncode(PLACE_ID), { token = tokenResult.token }, function(attempt)
+    local loadedRequest, loadCode, result = pcall(post, "/v1/scripts/load/" .. HttpService:UrlEncode(PLACE_ID), { token = tokenResult.token, player_id = PLAYER_ID }, function(attempt)
         setStatus("Connection interrupted. Retrying script download (" .. attempt .. "/4)…", "working")
     end)
     if not loadedRequest or type(result) ~= "table" or loadCode ~= 200 or not result.authorized or type(result.source) ~= "string" then
@@ -597,7 +600,7 @@ local function verifyAndLoad()
     -- One-time handoff: the payload reads and clears this immediately, then
     -- re-validates the key itself. We clear it again afterwards in case it never ran.
     local startupState = { state = "starting" }
-    getgenv().ScriptAccess = { Key = key, Fingerprint = installationId(), StartupState = startupState }
+    getgenv().ScriptAccess = { Key = key, Fingerprint = installationId(), PlayerId = PLAYER_ID, BuildChannel = result.build_channel or "production", StartupState = startupState }
     local ran, runErr = pcall(payload)
     getgenv().ScriptAccess = nil
 
