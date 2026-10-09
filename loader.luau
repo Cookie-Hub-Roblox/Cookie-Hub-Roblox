@@ -4,7 +4,7 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local CLIENT_VERSION = "roblox-gui/1.6"
+local CLIENT_VERSION = "roblox-gui/1.7"
 local REQUEST_ATTEMPTS = 4
 
 assert(getgenv, "This loader needs getgenv to hand the key to the place script.")
@@ -72,8 +72,9 @@ end
 local post
 local reportedFailures = {}
 local analyticsQueues = {}
+local analyticsStopped = {}
 local function analyticsAvailable(analytics)
-    return type(analytics) == "table" and type(analytics.session_id) == "string" and type(analytics.session_token) == "string"
+    return type(analytics) == "table" and type(analytics.session_id) == "string" and type(analytics.session_token) == "string" and not analyticsStopped[analytics.session_id]
 end
 local function reportEvent(analytics, event, text)
     if not analyticsAvailable(analytics) then return end
@@ -100,11 +101,18 @@ local function reportEvent(analytics, event, text)
     task.spawn(function()
         while #queue.events > 0 do
             local pendingEvent = table.remove(queue.events, 1)
-            pcall(post, "/v1/analytics/events", {
+            local ok, status = pcall(post, "/v1/analytics/events", {
                 session_id = analytics.session_id,
                 session_token = analytics.session_token,
                 events = { pendingEvent },
             })
+            -- Expired or revoked telemetry credentials must not send recurring
+            -- requests for the rest of an otherwise healthy game session.
+            if ok and (status == 401 or status == 403) then
+                analyticsStopped[analytics.session_id] = true
+                table.clear(queue.events)
+                break
+            end
         end
         queue.running = false
         analyticsQueues[analytics.session_id] = nil
@@ -132,9 +140,9 @@ local function startupTracker(analytics)
     end
     loaderState.retire = retire
     local function heartbeat()
-        if retired or values.state ~= "ready" or values.analyticsManaged == true or shared.CookieHubLoaderState ~= loaderState then return end
+        if retired or values.state ~= "ready" or values.analyticsManaged == true or shared.CookieHubLoaderState ~= loaderState or not analyticsAvailable(analytics) then return end
         reportEvent(analytics, "heartbeat")
-        task.delay(30, heartbeat)
+        task.delay(60, heartbeat)
     end
     local function changed()
         if values.state == "failed" then
@@ -153,7 +161,7 @@ local function startupTracker(analytics)
             if not successReported and values.analyticsManaged ~= true and analyticsAvailable(analytics) then
                 successReported = true
                 reportEvent(analytics, "load_success")
-                task.delay(30, heartbeat)
+                task.delay(60, heartbeat)
             end
         end
         if observer then observer(values.state, values.reason) end
