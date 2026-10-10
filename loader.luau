@@ -4,7 +4,7 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local CLIENT_VERSION = "roblox-gui/1.7"
+local CLIENT_VERSION = "roblox-gui/1.8"
 local REQUEST_ATTEMPTS = 4
 
 assert(getgenv, "This loader needs getgenv to hand the key to the place script.")
@@ -213,6 +213,59 @@ local probeOk, probeCode, probe = pcall(post, "/v1/scripts/load/" .. HttpService
     client_version = CLIENT_VERSION,
 })
 if not probeOk then error(tostring(probeCode), 0) end
+if probeCode == 404 and probe.reason == "unsupported_place" then
+    local function create(class, props)
+        local object = Instance.new(class)
+        local parent = props.Parent
+        for key, value in pairs(props) do
+            if key ~= "Parent" then object[key] = value end
+        end
+        object.Parent = parent
+        return object
+    end
+    local screen = create("ScreenGui", {
+        Name = "CookieHubUnsupportedGame", ResetOnSpawn = false,
+        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        Parent = Players.LocalPlayer:WaitForChild("PlayerGui"),
+    })
+    local card = create("Frame", {
+        AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
+        Size = UDim2.new(1, -32, 0, 238), BackgroundColor3 = Color3.fromRGB(22, 24, 36),
+        BorderSizePixel = 0, Parent = screen,
+    })
+    create("UISizeConstraint", { MaxSize = Vector2.new(420, 238), Parent = card })
+    create("UICorner", { CornerRadius = UDim.new(0, 16), Parent = card })
+    create("TextLabel", {
+        Position = UDim2.fromOffset(22, 20), Size = UDim2.new(1, -44, 0, 20),
+        BackgroundTransparency = 1, Text = "COOKIE HUB", Font = Enum.Font.GothamBold,
+        TextSize = 13, TextColor3 = Color3.fromRGB(240, 160, 60), Parent = card,
+    })
+    create("TextLabel", {
+        Position = UDim2.fromOffset(22, 52), Size = UDim2.new(1, -44, 0, 30),
+        BackgroundTransparency = 1, Text = "Unsupported game", Font = Enum.Font.GothamBold,
+        TextSize = 22, TextColor3 = Color3.fromRGB(240, 242, 250), Parent = card,
+    })
+    create("TextLabel", {
+        Position = UDim2.fromOffset(22, 92), Size = UDim2.new(1, -44, 0, 76),
+        BackgroundTransparency = 1, TextWrapped = true, Font = Enum.Font.Gotham,
+        Text = "Cookie Hub has no published script for this game yet.\nPlace ID: " .. PLACE_ID,
+        TextSize = 15, TextColor3 = Color3.fromRGB(137, 145, 172), Parent = card,
+    })
+    local dismiss = create("TextButton", {
+        Position = UDim2.fromOffset(22, 182), Size = UDim2.new(1, -44, 0, 36),
+        BackgroundColor3 = Color3.fromRGB(240, 160, 60), Text = "Got it",
+        Font = Enum.Font.GothamBold, TextSize = 14, TextColor3 = Color3.fromRGB(38, 24, 6), Parent = card,
+    })
+    create("UICorner", { CornerRadius = UDim.new(0, 8), Parent = dismiss })
+    local function closeNotice()
+        screen:Destroy()
+        if shared.CookieHubLoaderWindow == closeNotice then shared.CookieHubLoaderWindow = nil end
+    end
+    shared.CookieHubLoaderWindow = closeNotice
+    dismiss.MouseButton1Click:Connect(closeNotice)
+    releaseLoader()
+    return
+end
 if probeCode == 200 and probe.authorized == true and probe.keyless == true and type(probe.source) == "string" then
     local compiled, payload, compileErr = pcall(loadstring, probe.source, "=CookieHub/Place/" .. PLACE_ID)
     if not compiled or type(payload) ~= "function" then
