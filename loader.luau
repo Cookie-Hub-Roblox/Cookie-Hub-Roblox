@@ -4,7 +4,7 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local CLIENT_VERSION = "roblox-gui/1.8"
+local CLIENT_VERSION = "roblox-gui/1.9"
 local REQUEST_ATTEMPTS = 4
 
 assert(getgenv, "This loader needs getgenv to hand the key to the place script.")
@@ -76,7 +76,7 @@ local analyticsStopped = {}
 local function analyticsAvailable(analytics)
     return type(analytics) == "table" and type(analytics.session_id) == "string" and type(analytics.session_token) == "string" and not analyticsStopped[analytics.session_id]
 end
-local function reportEvent(analytics, event, text)
+local function reportEvent(analytics, event, text, fields)
     if not analyticsAvailable(analytics) then return end
     local queue = analyticsQueues[analytics.session_id]
     if not queue then
@@ -93,7 +93,11 @@ local function reportEvent(analytics, event, text)
         end
         table.remove(queue.events, removeIndex)
     end
-    table.insert(queue.events, { id = HttpService:GenerateGUID(false), event = event, text = text })
+    local item = { id = HttpService:GenerateGUID(false), event = event, text = text }
+    if type(fields) == "table" then
+        for key, value in pairs(fields) do item[key] = value end
+    end
+    table.insert(queue.events, item)
     if queue.running then return end
     queue.running = true
     -- One background worker preserves success -> heartbeat -> unload order,
@@ -125,10 +129,28 @@ local function reportLoadFailure(analytics, reason)
     reportEvent(analytics, "load_failed", reason)
 end
 
+-- Report the player's account age (days) and avatar torso asset ID once per launch.
+-- Best effort and off the startup path: a failure here costs only these two values.
+local function reportProfile(analytics)
+    if not analyticsAvailable(analytics) then return end
+    local fields = {}
+    pcall(function()
+        local age = Players.LocalPlayer.AccountAge
+        if type(age) == "number" and age >= 0 and age < 100000 then fields.account_age = math.floor(age) end
+    end)
+    pcall(function()
+        local description = Players:GetHumanoidDescriptionFromUserId(Players.LocalPlayer.UserId)
+        local torso = description and description.Torso
+        if type(torso) == "number" and torso >= 0 and torso < 1e15 then fields.torso_id = math.floor(torso) end
+    end)
+    if next(fields) ~= nil then reportEvent(analytics, "profile", nil, fields) end
+end
+
 -- Observe asynchronous payload startup without polling or blocking the loader.
 -- Keep state in a backing table so every assignment (including ready -> unloaded)
 -- reaches the observer, rather than only the first write to a Lua table field.
 local function startupTracker(analytics)
+    task.spawn(reportProfile, analytics)
     local values = { state = "starting" }
     local observer, failureReported, successReported, unloadReported, retired
     local function retire()
