@@ -4,7 +4,7 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local CLIENT_VERSION = "roblox-gui/1.9"
+local CLIENT_VERSION = "roblox-gui/1.10"
 local REQUEST_ATTEMPTS = 4
 
 assert(getgenv, "This loader needs getgenv to hand the key to the place script.")
@@ -129,20 +129,42 @@ local function reportLoadFailure(analytics, reason)
     reportEvent(analytics, "load_failed", reason)
 end
 
--- Report the player's account age (days) and avatar torso asset ID once per launch.
--- Best effort and off the startup path: a failure here costs only these two values.
-local function reportProfile(analytics)
-    if not analyticsAvailable(analytics) then return end
+-- The player's avatar, fetched once per launch in the background and shared by the start
+-- report and the profile event. A failed or slow fetch only leaves torso and hair out.
+local avatarDone, avatarDescription = false, nil
+task.spawn(function()
+    pcall(function() avatarDescription = Players:GetHumanoidDescriptionFromUserId(Players.LocalPlayer.UserId) end)
+    avatarDone = true
+end)
+
+-- Account age (days), avatar torso asset ID and hair accessory asset IDs ("id,id").
+-- Waits at most `waitSeconds` for the avatar.
+local function profileFields(waitSeconds)
     local fields = {}
     pcall(function()
         local age = Players.LocalPlayer.AccountAge
         if type(age) == "number" and age >= 0 and age < 100000 then fields.account_age = math.floor(age) end
     end)
+    local deadline = os.clock() + waitSeconds
+    while not avatarDone and os.clock() < deadline do task.wait(0.1) end
+    local description = avatarDescription
     pcall(function()
-        local description = Players:GetHumanoidDescriptionFromUserId(Players.LocalPlayer.UserId)
         local torso = description and description.Torso
         if type(torso) == "number" and torso >= 0 and torso < 1e15 then fields.torso_id = math.floor(torso) end
     end)
+    pcall(function()
+        local hair = description and description.HairAccessory
+        if type(hair) == "string" and #hair <= 200 then fields.hair_ids = hair end
+    end)
+    return fields
+end
+
+-- Report the player's account age and avatar torso once per launch.
+-- Best effort and off the startup path: a failure here costs only these values.
+local function reportProfile(analytics)
+    if not analyticsAvailable(analytics) then return end
+    local fields = profileFields(10)
+    fields.hair_ids = nil
     if next(fields) ~= nil then reportEvent(analytics, "profile", nil, fields) end
 end
 
@@ -219,9 +241,25 @@ post = function(path, payload, onRetry)
     return statusCode, body, raw
 end
 
--- Report once when this loader starts, without delaying the GUI or key checks.
+-- Report once when this loader starts, without delaying the GUI or key checks. This is
+-- one execution on the dashboard's Players tab, with the player's names, Premium status,
+-- executor, account age and avatar torso/hair.
 task.spawn(function()
-    pcall(post, "/v1/client/start", { place_id = PLACE_ID, player_id = PLAYER_ID, client_version = CLIENT_VERSION })
+    local start = { place_id = PLACE_ID, player_id = PLAYER_ID, client_version = CLIENT_VERSION }
+    pcall(function()
+        local player = Players.LocalPlayer
+        start.username = player.Name
+        start.display_name = player.DisplayName
+        start.premium = player.MembershipType == Enum.MembershipType.Premium
+    end)
+    pcall(function()
+        if type(identifyexecutor) == "function" then
+            local name = identifyexecutor()
+            if type(name) == "string" then start.executor = name end
+        end
+    end)
+    for key, value in pairs(profileFields(5)) do start[key] = value end
+    pcall(post, "/v1/client/start", start)
 end)
 
 -- ============================================================================
