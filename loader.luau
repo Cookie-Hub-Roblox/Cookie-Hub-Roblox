@@ -4,7 +4,7 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local CLIENT_VERSION = "roblox-gui/1.12"
+local CLIENT_VERSION = "roblox-gui/1.13"
 local REQUEST_ATTEMPTS = 4
 
 assert(getgenv, "This loader needs getgenv to hand the key to the place script.")
@@ -68,12 +68,12 @@ getgenv().CookieHubDebugLog = nil -- discard the previous diagnostic build's buf
 -- ============================================================================
 -- English is built in. Other languages are plain JSON next to this loader in the public
 -- repository (translations/loader/<code>.json, {"strings":{"English":"Translated"}}), keyed
--- by the English text; {1}, {2}… are values filled in at runtime. The choice is shared with
+-- by the English text; {1}, {2}... are values filled in at runtime. The choice is shared with
 -- the game menus through cookie-hub/language.txt: "auto" (the default) follows the Roblox
 -- language setting. A failed download keeps English or the last downloaded copy.
 local LANGUAGES = {
-    { "en", "English" }, { "ru", "Русский" }, { "pt", "Português" }, { "es", "Español" },
-    { "de", "Deutsch" }, { "vi", "Tiếng Việt" }, { "id", "Bahasa Indonesia" }, { "th", "ไทย" },
+    { "en", "English" }, { "ru", "\u{420}\u{443}\u{441}\u{441}\u{43A}\u{438}\u{439}" }, { "pt", "Portugu\u{EA}s" }, { "es", "Espa\u{F1}ol" },
+    { "de", "Deutsch" }, { "vi", "Ti\u{1EBF}ng Vi\u{1EC7}t" }, { "id", "Bahasa Indonesia" }, { "th", "\u{E44}\u{E17}\u{E22}" },
     { "fil", "Filipino" },
 }
 local LANGUAGE_FILE = "cookie-hub/language.txt"
@@ -673,7 +673,7 @@ create("Frame", {
     create("TextLabel", {
         Size = UDim2.fromScale(1, 1),
         BackgroundTransparency = 1,
-        Text = "🍪",
+        Text = "\u{1F36A}",
         TextSize = 26,
         Font = Enum.Font.GothamBold,
         TextColor3 = Theme.Text,
@@ -754,7 +754,7 @@ local languageButton = create("TextButton", {
     TextSize = 12,
     Parent = header,
 }, { corner(8) })
-localize(languageButton, function() return "🌐 " .. string.upper(languageCode) end)
+localize(languageButton, function() return "\u{1F310} " .. string.upper(languageCode) end)
 languageButton.MouseEnter:Connect(function()
     tween(languageButton, 0.12, { BackgroundTransparency = 0, TextColor3 = Theme.Text })
 end)
@@ -797,8 +797,8 @@ for order, choice in ipairs(languageChoices) do
         Parent = languageMenu,
     }, { corner(6), create("UIPadding", { PaddingLeft = UDim.new(0, 8) }) })
     localize(item, function()
-        local mark = languagePreference() == choice[1] and "✓  " or "     "
-        -- "Same as Roblox (Español)": the detected Game Language in its own name.
+        local mark = languagePreference() == choice[1] and "\u{2713}  " or "     "
+        -- "Same as Roblox (Espanol)", spelled in that language: the detected Game Language in its own name.
         return mark .. (choice[2] or T("Same as Roblox") .. " (" .. supportedLanguages[robloxLanguage()] .. ")")
     end)
     item.MouseEnter:Connect(function() item.BackgroundTransparency = 0 end)
@@ -923,7 +923,7 @@ local StatusColors = {
     error = Theme.Error,
 }
 
--- `text` is English with {1}, {2}… for the values that follow `kind`; server messages
+-- `text` is English with {1}, {2}... for the values that follow `kind`; server messages
 -- without a translation show as sent.
 local function setStatus(text, kind, ...)
     local color = StatusColors[kind or "info"]
@@ -970,7 +970,7 @@ local discordButton = create("TextButton", {
     Parent = card,
 }, { corner(8) })
 
-localize(discordButton, function() return "💬  " .. T("Join our Discord") .. "  ·  dsc.gg/cookie-hub-rblx" end)
+localize(discordButton, function() return "\u{1F4AC}  " .. T("Join our Discord") .. "  \u{B7}  dsc.gg/cookie-hub-rblx" end)
 
 discordButton.MouseEnter:Connect(function()
     tween(discordButton, 0.12, { BackgroundTransparency = 0, TextColor3 = Theme.Text })
@@ -1052,7 +1052,7 @@ end)
 local function setBusy(state)
     busy = state
     if not state then releaseLoader() end
-    setText(verify, state and "Checking…" or "Verify & load")
+    setText(verify, state and "Checking\u{2026}" or "Verify & load")
     tween(verify, 0.12, { BackgroundColor3 = state and Theme.ButtonHover or Theme.Accent })
     verify.TextColor3 = state and Theme.Muted or Theme.AccentText
 end
@@ -1072,7 +1072,7 @@ local function verifyAndLoad()
     loaderState.state = "starting"
     loaderState.cancelled = false
     setBusy(true)
-    setStatus("Checking key…", "working")
+    setStatus("Checking key\u{2026}", "working")
 
     local ok, code, tokenResult = pcall(post, "/v1/token", {
         key = key,
@@ -1081,7 +1081,7 @@ local function verifyAndLoad()
         player_id = PLAYER_ID,
         client_version = CLIENT_VERSION,
     }, function(attempt)
-        setStatus("Connection interrupted. Retrying verification ({1}/4)…", "working", attempt)
+        setStatus("Connection interrupted. Retrying verification ({1}/4)\u{2026}", "working", attempt)
     end)
     if loaderState.cancelled or not screen.Parent then return end
     if not ok or type(tokenResult) ~= "table" or code ~= 200 or not tokenResult.authorized or type(tokenResult.token) ~= "string" then
@@ -1097,11 +1097,11 @@ local function verifyAndLoad()
 
     -- Save only after acceptance, even if the subsequent script download fails.
     local saved = saveKey(key)
-    setStatus(saved and "Key accepted. Downloading script…" or "Key accepted. Saving unavailable; downloading…", "working")
+    setStatus(saved and "Key accepted. Downloading script\u{2026}" or "Key accepted. Saving unavailable; downloading\u{2026}", "working")
 
     -- Send the short-lived token in JSON: this executor drops Body when Authorization is set.
     local loadedRequest, loadCode, result = pcall(post, "/v1/scripts/load/" .. HttpService:UrlEncode(PLACE_ID), { token = tokenResult.token, player_id = PLAYER_ID, client_version = CLIENT_VERSION }, function(attempt)
-        setStatus("Connection interrupted. Retrying script download ({1}/4)…", "working", attempt)
+        setStatus("Connection interrupted. Retrying script download ({1}/4)\u{2026}", "working", attempt)
     end)
     if loaderState.cancelled or not screen.Parent then return end
     if not loadedRequest or type(result) ~= "table" or loadCode ~= 200 or not result.authorized or type(result.source) ~= "string" then
@@ -1119,7 +1119,7 @@ local function verifyAndLoad()
         return
     end
 
-    setStatus("Verified. Loading Cookie Hub…", "ok")
+    setStatus("Verified. Loading Cookie Hub\u{2026}", "ok")
 
     -- One-time handoff: the payload reads and clears this immediately, then
     -- re-validates the key itself. We clear it again afterwards in case it never ran.
@@ -1171,7 +1171,7 @@ tween(card, 0.25, { GroupTransparency = 0 })
 tween(scale, 0.25, { Scale = 1 })
 
 if savedKey then
-    setStatus("Checking saved key…", "working")
+    setStatus("Checking saved key\u{2026}", "working")
     task.spawn(tryVerifyAndLoad)
 elseif type(readfile) ~= "function" or type(writefile) ~= "function" then
     setStatus("Enter your key. This executor cannot save keys between sessions.", "info")
