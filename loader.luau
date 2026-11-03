@@ -4,7 +4,7 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local CLIENT_VERSION = "roblox-gui/1.11"
+local CLIENT_VERSION = "roblox-gui/1.12"
 local REQUEST_ATTEMPTS = 4
 
 assert(getgenv, "This loader needs getgenv to hand the key to the place script.")
@@ -95,10 +95,11 @@ local function writeText(path, text)
     return (pcall(writefile, path, text))
 end
 
+-- Roblox's Game Language (LocalPlayer.LocaleId) first; RobloxLocaleId is the app's own language.
 local function robloxLanguage()
     local locale
-    pcall(function() locale = game:GetService("LocalizationService").RobloxLocaleId end)
-    if type(locale) ~= "string" or locale == "" then pcall(function() locale = Players.LocalPlayer.LocaleId end) end
+    pcall(function() locale = Players.LocalPlayer.LocaleId end)
+    if type(locale) ~= "string" or locale == "" then pcall(function() locale = game:GetService("LocalizationService").RobloxLocaleId end) end
     local code = type(locale) == "string" and string.match(string.lower(locale), "^%s*(%a+)") or "en"
     if code == "tl" then code = "fil" end
     return supportedLanguages[code] and code or "en"
@@ -558,9 +559,19 @@ end
 
 -- Text drawn in the current language; redrawn when it changes.
 local localized = {}
+-- Thai glyphs render small next to Latin text at the same size: labels showing Thai are 1.3x.
+local THAI_TEXT_SCALE = 1.3
+local baseTextSizes = {}
+local function fitThai(object)
+    local base = baseTextSizes[object] or object.TextSize
+    baseTextSizes[object] = base
+    local size = string.find(object.Text, "\224[\184\185]") and math.floor(base * THAI_TEXT_SCALE + 0.5) or base
+    if object.TextSize ~= size then object.TextSize = size end
+end
 local function localize(object, render, property)
     localized[object] = { render, property or "Text" }
     object[property or "Text"] = render()
+    if (property or "Text") == "Text" then fitThai(object) end
 end
 local function setText(object, text, ...)
     local values = table.pack(...)
@@ -787,7 +798,8 @@ for order, choice in ipairs(languageChoices) do
     }, { corner(6), create("UIPadding", { PaddingLeft = UDim.new(0, 8) }) })
     localize(item, function()
         local mark = languagePreference() == choice[1] and "✓  " or "     "
-        return mark .. (choice[2] or T("Same as Roblox"))
+        -- "Same as Roblox (Español)": the detected Game Language in its own name.
+        return mark .. (choice[2] or T("Same as Roblox") .. " (" .. supportedLanguages[robloxLanguage()] .. ")")
     end)
     item.MouseEnter:Connect(function() item.BackgroundTransparency = 0 end)
     item.MouseLeave:Connect(function() item.BackgroundTransparency = 1 end)
@@ -897,7 +909,10 @@ local statusLabel = create("TextLabel", {
 
 languageChanged = function()
     for object, entry in pairs(localized) do
-        if object.Parent then object[entry[2]] = entry[1]() end
+        if object.Parent then
+            object[entry[2]] = entry[1]()
+            if entry[2] == "Text" then fitThai(object) end
+        end
     end
 end
 
