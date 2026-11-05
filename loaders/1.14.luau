@@ -4,7 +4,17 @@
 -- This uses executor HTTP/loadstring APIs. Roblox Studio LocalScripts cannot make
 -- arbitrary outbound HTTP requests or execute downloaded source; use a server-side
 -- bridge for an experience you own instead.
-local CLIENT_VERSION = "roblox-gui/1.9"
+--
+-- Published as an immutable loaders/<LOADER_VERSION>.luau in Cookie-Hub-Roblox/Cookie-Hub-Roblox;
+-- loader.luau on each branch is a small pointer that runs a chosen version and passes
+-- { channel = "production" | "staging" } (roblox-scripts/loader-pointer.luau). Run without
+-- arguments, it behaves as production. Staging reads the staging branch's translations and
+-- asks the worker for the place's staging menu build.
+local LOADER_OPTIONS = ...
+local CHANNEL = type(LOADER_OPTIONS) == "table" and LOADER_OPTIONS.channel == "staging" and "staging" or "production"
+local LOADER_VERSION = "1.14"
+local CLIENT_VERSION = "roblox-gui/" .. LOADER_VERSION .. (CHANNEL == "staging" and "-staging" or "")
+local REQUESTED_CHANNEL = CHANNEL == "staging" and "staging" or nil
 local REQUEST_ATTEMPTS = 4
 
 assert(getgenv, "This loader needs getgenv to hand the key to the place script.")
@@ -62,6 +72,131 @@ local requestFn = request or http_request or (syn and syn.request)
 assert(requestFn, "This loader needs an HTTP request API.")
 assert(loadstring, "This loader needs loadstring enabled.")
 getgenv().CookieHubDebugLog = nil -- discard the previous diagnostic build's buffer
+
+-- ============================================================================
+-- Language
+-- ============================================================================
+-- English is built in. Other languages are plain JSON in the public repository, on the
+-- channel's branch (translations/loader/<code>.json, {"strings":{"English":"Translated"}}), keyed
+-- by the English text; {1}, {2}... are values filled in at runtime. The choice is shared with
+-- the game menus through cookie-hub/language.txt: "auto" (the default) follows the Roblox
+-- language setting. A failed download keeps English or the last downloaded copy.
+local LANGUAGES = {
+    { "en", "English" }, { "ru", "\u{420}\u{443}\u{441}\u{441}\u{43A}\u{438}\u{439}" }, { "pt", "Portugu\u{EA}s" }, { "es", "Espa\u{F1}ol" },
+    { "de", "Deutsch" }, { "vi", "Ti\u{1EBF}ng Vi\u{1EC7}t" }, { "id", "Bahasa Indonesia" }, { "th", "\u{E44}\u{E17}\u{E22}" },
+    { "fil", "Filipino" },
+}
+local LANGUAGE_FILE = "cookie-hub/language.txt"
+local TRANSLATION_URL = "https://raw.githubusercontent.com/Cookie-Hub-Roblox/Cookie-Hub-Roblox/"
+    .. (CHANNEL == "staging" and "staging" or "main") .. "/translations/loader/"
+local supportedLanguages = {}
+for _, language in ipairs(LANGUAGES) do supportedLanguages[language[1]] = language[2] end
+
+local function readText(path)
+    if type(readfile) ~= "function" or (type(isfile) == "function" and not isfile(path)) then return nil end
+    local ok, value = pcall(readfile, path)
+    return ok and type(value) == "string" and value or nil
+end
+local function writeText(path, text)
+    if type(writefile) ~= "function" then return false end
+    if type(makefolder) == "function" then
+        pcall(makefolder, "cookie-hub")
+        if string.find(path, "cookie-hub/translations/", 1, true) == 1 then pcall(makefolder, "cookie-hub/translations") end
+    end
+    return (pcall(writefile, path, text))
+end
+
+-- Roblox's Game Language (LocalPlayer.LocaleId) first; RobloxLocaleId is the app's own language.
+local function robloxLanguage()
+    local locale
+    pcall(function() locale = Players.LocalPlayer.LocaleId end)
+    if type(locale) ~= "string" or locale == "" then pcall(function() locale = game:GetService("LocalizationService").RobloxLocaleId end) end
+    local code = type(locale) == "string" and string.match(string.lower(locale), "^%s*(%a+)") or "en"
+    if code == "tl" then code = "fil" end
+    return supportedLanguages[code] and code or "en"
+end
+
+-- "auto" or a language code.
+local function languagePreference()
+    local value = string.match(string.lower(readText(LANGUAGE_FILE) or ""), "^%s*(%a+)")
+    return supportedLanguages[value] and value or "auto"
+end
+
+local translations, languageCode = nil, "en"
+local function T(text, ...)
+    local result = translations and translations[text] or text
+    local values = table.pack(...)
+    if values.n > 0 then
+        result = string.gsub(result, "{(%d+)}", function(index)
+            local value = values[tonumber(index)]
+            return value ~= nil and tostring(value) or ""
+        end)
+    end
+    return result
+end
+
+local function decodeTranslations(text)
+    if type(text) ~= "string" or text == "" then return nil end
+    local ok, data = pcall(HttpService.JSONDecode, HttpService, text)
+    local strings = ok and type(data) == "table" and type(data.strings) == "table" and data.strings or nil
+    if not strings then return nil end
+    local clean = {}
+    for source, translated in pairs(strings) do
+        if type(source) == "string" and type(translated) == "string" and translated ~= "" then clean[source] = translated end
+    end
+    return clean
+end
+
+-- Switch language. The cached copy applies at once and the download replaces it if newer;
+-- the window redraws through languageChanged. Returns a handle whose `done` turns true
+-- when the download ends.
+local languageRequest, languageChanged = 0, nil
+local function onChange()
+    if languageChanged then pcall(languageChanged) end
+end
+local function useLanguage(code)
+    languageRequest += 1
+    local token, handle = languageRequest, { code = code, done = false }
+    local cachePath = "cookie-hub/translations/loader-" .. (CHANNEL == "staging" and "staging-" or "") .. code .. ".json"
+    if code == "en" then
+        translations, languageCode = nil, "en"
+        handle.done, handle.ok = true, true
+        onChange()
+        return handle
+    end
+    local cachedText = readText(cachePath)
+    local cached = decodeTranslations(cachedText)
+    translations, languageCode = cached, cached and code or "en"
+    handle.cached = cached ~= nil
+    onChange()
+    task.spawn(function()
+        local ok, response = pcall(requestFn, { Url = TRANSLATION_URL .. code .. ".json", Method = "GET" })
+        local status = ok and type(response) == "table" and tonumber(response.StatusCode or response.Status or response.status_code) or 0
+        local body = status == 200 and (response.Body or response.body) or nil
+        local fresh = decodeTranslations(body)
+        if token == languageRequest and fresh then
+            handle.ok = true
+            if body ~= cachedText then
+                writeText(cachePath, body)
+                translations, languageCode = fresh, code
+                onChange()
+            end
+        end
+        handle.done = true
+    end)
+    return handle
+end
+
+local languageStarted = os.clock()
+local function preferredLanguage()
+    local preference = languagePreference()
+    return preference == "auto" and robloxLanguage() or preference
+end
+local languageLoad = useLanguage(preferredLanguage())
+-- A first download gets up to 3 s (it runs alongside the server check) before text is shown.
+local function waitForLanguage()
+    while not languageLoad.done and not languageLoad.cached and os.clock() - languageStarted < 3 do task.wait(0.05) end
+end
 
 local function installationId()
     -- Keep this stable if your executor exposes a persistent identifier. This sample
@@ -129,20 +264,42 @@ local function reportLoadFailure(analytics, reason)
     reportEvent(analytics, "load_failed", reason)
 end
 
--- Report the player's account age (days) and avatar torso asset ID once per launch.
--- Best effort and off the startup path: a failure here costs only these two values.
-local function reportProfile(analytics)
-    if not analyticsAvailable(analytics) then return end
+-- The player's avatar, fetched once per launch in the background and shared by the start
+-- report and the profile event. A failed or slow fetch only leaves torso and hair out.
+local avatarDone, avatarDescription = false, nil
+task.spawn(function()
+    pcall(function() avatarDescription = Players:GetHumanoidDescriptionFromUserId(Players.LocalPlayer.UserId) end)
+    avatarDone = true
+end)
+
+-- Account age (days), avatar torso asset ID and hair accessory asset IDs ("id,id").
+-- Waits at most `waitSeconds` for the avatar.
+local function profileFields(waitSeconds)
     local fields = {}
     pcall(function()
         local age = Players.LocalPlayer.AccountAge
         if type(age) == "number" and age >= 0 and age < 100000 then fields.account_age = math.floor(age) end
     end)
+    local deadline = os.clock() + waitSeconds
+    while not avatarDone and os.clock() < deadline do task.wait(0.1) end
+    local description = avatarDescription
     pcall(function()
-        local description = Players:GetHumanoidDescriptionFromUserId(Players.LocalPlayer.UserId)
         local torso = description and description.Torso
         if type(torso) == "number" and torso >= 0 and torso < 1e15 then fields.torso_id = math.floor(torso) end
     end)
+    pcall(function()
+        local hair = description and description.HairAccessory
+        if type(hair) == "string" and #hair <= 200 then fields.hair_ids = hair end
+    end)
+    return fields
+end
+
+-- Report the player's account age and avatar torso once per launch.
+-- Best effort and off the startup path: a failure here costs only these values.
+local function reportProfile(analytics)
+    if not analyticsAvailable(analytics) then return end
+    local fields = profileFields(10)
+    fields.hair_ids = nil
     if next(fields) ~= nil then reportEvent(analytics, "profile", nil, fields) end
 end
 
@@ -219,9 +376,25 @@ post = function(path, payload, onRetry)
     return statusCode, body, raw
 end
 
--- Report once when this loader starts, without delaying the GUI or key checks.
+-- Report once when this loader starts, without delaying the GUI or key checks. This is
+-- one execution on the dashboard's Players tab, with the player's names, Premium status,
+-- executor, account age and avatar torso/hair.
 task.spawn(function()
-    pcall(post, "/v1/client/start", { place_id = PLACE_ID, player_id = PLAYER_ID, client_version = CLIENT_VERSION })
+    local start = { place_id = PLACE_ID, player_id = PLAYER_ID, client_version = CLIENT_VERSION }
+    pcall(function()
+        local player = Players.LocalPlayer
+        start.username = player.Name
+        start.display_name = player.DisplayName
+        start.premium = player.MembershipType == Enum.MembershipType.Premium
+    end)
+    pcall(function()
+        if type(identifyexecutor) == "function" then
+            local name = identifyexecutor()
+            if type(name) == "string" then start.executor = name end
+        end
+    end)
+    for key, value in pairs(profileFields(5)) do start[key] = value end
+    pcall(post, "/v1/client/start", start)
 end)
 
 -- ============================================================================
@@ -233,9 +406,11 @@ local probeOk, probeCode, probe = pcall(post, "/v1/scripts/load/" .. HttpService
     place_id = PLACE_ID,
     player_id = PLAYER_ID,
     client_version = CLIENT_VERSION,
+    build_channel = REQUESTED_CHANNEL,
 })
 if not probeOk then error(tostring(probeCode), 0) end
 if probeCode == 404 and probe.reason == "unsupported_place" then
+    waitForLanguage()
     local function create(class, props)
         local object = Instance.new(class)
         local parent = props.Parent
@@ -264,18 +439,18 @@ if probeCode == 404 and probe.reason == "unsupported_place" then
     })
     create("TextLabel", {
         Position = UDim2.fromOffset(22, 52), Size = UDim2.new(1, -44, 0, 30),
-        BackgroundTransparency = 1, Text = "Unsupported game", Font = Enum.Font.GothamBold,
+        BackgroundTransparency = 1, Text = T("Unsupported game"), Font = Enum.Font.GothamBold,
         TextSize = 22, TextColor3 = Color3.fromRGB(240, 242, 250), Parent = card,
     })
     create("TextLabel", {
         Position = UDim2.fromOffset(22, 92), Size = UDim2.new(1, -44, 0, 76),
         BackgroundTransparency = 1, TextWrapped = true, Font = Enum.Font.Gotham,
-        Text = "Cookie Hub has no published script for this game yet.\nPlace ID: " .. PLACE_ID,
+        Text = T("Cookie Hub has no published script for this game yet.") .. "\n" .. T("Place ID: {1}", PLACE_ID),
         TextSize = 15, TextColor3 = Color3.fromRGB(137, 145, 172), Parent = card,
     })
     local dismiss = create("TextButton", {
         Position = UDim2.fromOffset(22, 182), Size = UDim2.new(1, -44, 0, 36),
-        BackgroundColor3 = Color3.fromRGB(240, 160, 60), Text = "Got it",
+        BackgroundColor3 = Color3.fromRGB(240, 160, 60), Text = T("Got it"),
         Font = Enum.Font.GothamBold, TextSize = 14, TextColor3 = Color3.fromRGB(38, 24, 6), Parent = card,
     })
     create("UICorner", { CornerRadius = UDim.new(0, 8), Parent = dismiss })
@@ -351,6 +526,16 @@ local InvalidKeyReasons = {
     fingerprint_already_claimed = true,
 }
 
+-- Readable text for the key check's reason codes.
+local ReasonText = {
+    key_not_found = "That key was not found. Check it or get a new key.",
+    key_revoked = "That key was revoked. Get a new key.",
+    key_expired = "That key has expired. Get a new key.",
+    fingerprint_mismatch = "That key is linked to another Roblox account.",
+    fingerprint_already_claimed = "That key is linked to another Roblox account.",
+    rate_limited = "Please wait before retrying.",
+}
+
 local Theme = {
     Card = Color3.fromRGB(22, 24, 36),
     CardDark = Color3.fromRGB(15, 16, 25),
@@ -382,6 +567,27 @@ local function create(class, props, children)
     end
     object.Parent = parent
     return object
+end
+
+-- Text drawn in the current language; redrawn when it changes.
+local localized = {}
+-- Thai glyphs render small next to Latin text at the same size: labels showing Thai are 1.3x.
+local THAI_TEXT_SCALE = 1.3
+local baseTextSizes = {}
+local function fitThai(object)
+    local base = baseTextSizes[object] or object.TextSize
+    baseTextSizes[object] = base
+    local size = string.find(object.Text, "\224[\184\185]") and math.floor(base * THAI_TEXT_SCALE + 0.5) or base
+    if object.TextSize ~= size then object.TextSize = size end
+end
+local function localize(object, render, property)
+    localized[object] = { render, property or "Text" }
+    object[property or "Text"] = render()
+    if (property or "Text") == "Text" then fitThai(object) end
+end
+local function setText(object, text, ...)
+    local values = table.pack(...)
+    localize(object, function() return T(text, table.unpack(values, 1, values.n)) end)
 end
 
 local function corner(radius)
@@ -416,6 +622,7 @@ end
 -- Window
 -- ============================================================================
 local playerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+waitForLanguage()
 
 local screen = create("ScreenGui", {
     Name = "ScriptAccess",
@@ -478,7 +685,7 @@ create("Frame", {
     create("TextLabel", {
         Size = UDim2.fromScale(1, 1),
         BackgroundTransparency = 1,
-        Text = "🍪",
+        Text = "\u{1F36A}",
         TextSize = 26,
         Font = Enum.Font.GothamBold,
         TextColor3 = Theme.Text,
@@ -487,9 +694,9 @@ create("Frame", {
 
 create("TextLabel", {
     Position = UDim2.fromOffset(78, 17),
-    Size = UDim2.new(1, -130, 0, 26),
+    Size = UDim2.new(1, -190, 0, 26),
     BackgroundTransparency = 1,
-    Text = "Cookie Hub",
+    Text = CHANNEL == "staging" and "Cookie Hub (Staging)" or "Cookie Hub",
     TextColor3 = Theme.Text,
     Font = Enum.Font.GothamBold,
     TextSize = 21,
@@ -499,9 +706,9 @@ create("TextLabel", {
 
 local subtitle = create("TextLabel", {
     Position = UDim2.fromOffset(78, 43),
-    Size = UDim2.new(1, -130, 0, 18),
+    Size = UDim2.new(1, -190, 0, 18),
     BackgroundTransparency = 1,
-    Text = "Place " .. PLACE_ID,
+    Text = "",
     TextColor3 = Theme.Muted,
     Font = Enum.Font.Gotham,
     TextSize = 13,
@@ -509,6 +716,7 @@ local subtitle = create("TextLabel", {
     TextXAlignment = Enum.TextXAlignment.Left,
     Parent = header,
 })
+setText(subtitle, "Place {1}", PLACE_ID)
 
 -- Show the name of the game we are in (falls back to the place id if the lookup fails)
 task.spawn(function()
@@ -516,6 +724,7 @@ task.spawn(function()
         return game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
     end)
     if ok and type(info) == "table" and type(info.Name) == "string" and info.Name ~= "" and subtitle.Parent then
+        localized[subtitle] = nil
         subtitle.Text = info.Name
     end
 end)
@@ -542,6 +751,76 @@ closeButton.MouseLeave:Connect(function()
     tween(closeButton, 0.12, { BackgroundTransparency = 1, TextColor3 = Theme.Muted })
 end)
 
+-- Language picker: "Same as Roblox" (default) or a language, shared with the game menus.
+local languageButton = create("TextButton", {
+    Name = "Language",
+    AnchorPoint = Vector2.new(1, 0),
+    Position = UDim2.new(1, -50, 0, 20),
+    Size = UDim2.fromOffset(60, 28),
+    BackgroundColor3 = Theme.Button,
+    BackgroundTransparency = 1,
+    AutoButtonColor = false,
+    Text = "",
+    TextColor3 = Theme.Muted,
+    Font = Enum.Font.GothamBold,
+    TextSize = 12,
+    Parent = header,
+}, { corner(8) })
+localize(languageButton, function() return "\u{1F310} " .. string.upper(languageCode) end)
+languageButton.MouseEnter:Connect(function()
+    tween(languageButton, 0.12, { BackgroundTransparency = 0, TextColor3 = Theme.Text })
+end)
+languageButton.MouseLeave:Connect(function()
+    tween(languageButton, 0.12, { BackgroundTransparency = 1, TextColor3 = Theme.Muted })
+end)
+
+local languageMenu = create("Frame", {
+    Name = "Languages",
+    AnchorPoint = Vector2.new(1, 0),
+    Position = UDim2.new(1, -16, 0, 52),
+    Size = UDim2.fromOffset(200, 0),
+    AutomaticSize = Enum.AutomaticSize.Y,
+    BackgroundColor3 = Theme.CardDark,
+    Visible = false,
+    ZIndex = 20,
+    Parent = card,
+}, {
+    corner(10),
+    stroke(Theme.Stroke, 0.1),
+    create("UIPadding", { PaddingTop = UDim.new(0, 4), PaddingBottom = UDim.new(0, 4), PaddingLeft = UDim.new(0, 4), PaddingRight = UDim.new(0, 4) }),
+    create("UIListLayout", { Padding = UDim.new(0, 2), SortOrder = Enum.SortOrder.LayoutOrder }),
+})
+local languageChoices = { { "auto" } }
+for _, language in ipairs(LANGUAGES) do table.insert(languageChoices, language) end
+local chooseLanguage
+for order, choice in ipairs(languageChoices) do
+    local item = create("TextButton", {
+        LayoutOrder = order,
+        Size = UDim2.new(1, 0, 0, 24),
+        BackgroundColor3 = Theme.ButtonHover,
+        BackgroundTransparency = 1,
+        AutoButtonColor = false,
+        Text = "",
+        TextColor3 = Theme.Text,
+        Font = Enum.Font.GothamMedium,
+        TextSize = 13,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 21,
+        Parent = languageMenu,
+    }, { corner(6), create("UIPadding", { PaddingLeft = UDim.new(0, 8) }) })
+    localize(item, function()
+        local mark = languagePreference() == choice[1] and "\u{2713}  " or "     "
+        -- "Same as Roblox (Espanol)", spelled in that language: the detected Game Language in its own name.
+        return mark .. (choice[2] or T("Same as Roblox") .. " (" .. supportedLanguages[robloxLanguage()] .. ")")
+    end)
+    item.MouseEnter:Connect(function() item.BackgroundTransparency = 0 end)
+    item.MouseLeave:Connect(function() item.BackgroundTransparency = 1 end)
+    item.MouseButton1Click:Connect(function() chooseLanguage(choice[1]) end)
+end
+languageButton.MouseButton1Click:Connect(function()
+    languageMenu.Visible = not languageMenu.Visible
+end)
+
 create("Frame", {
     Position = UDim2.fromOffset(20, 78),
     Size = UDim2.new(1, -40, 0, 1),
@@ -552,17 +831,18 @@ create("Frame", {
 })
 
 -- Key field
-create("TextLabel", {
+local keyHeading = create("TextLabel", {
     Position = UDim2.fromOffset(22, 96),
     Size = UDim2.new(1, -44, 0, 14),
     BackgroundTransparency = 1,
-    Text = "ACCESS KEY",
+    Text = "",
     TextColor3 = Theme.Muted,
     Font = Enum.Font.GothamBold,
     TextSize = 11,
     TextXAlignment = Enum.TextXAlignment.Left,
     Parent = card,
 })
+setText(keyHeading, "ACCESS KEY")
 
 local keyStroke = stroke(Theme.Stroke, 0.2)
 local keyBox = create("TextBox", {
@@ -570,7 +850,7 @@ local keyBox = create("TextBox", {
     Position = UDim2.fromOffset(20, 116),
     Size = UDim2.new(1, -40, 0, 44),
     BackgroundColor3 = Theme.Field,
-    PlaceholderText = "Paste your access key",
+    PlaceholderText = "",
     PlaceholderColor3 = Color3.fromRGB(92, 100, 128),
     Text = savedKey or "",
     TextColor3 = Theme.Text,
@@ -584,6 +864,8 @@ local keyBox = create("TextBox", {
     keyStroke,
     create("UIPadding", { PaddingLeft = UDim.new(0, 14), PaddingRight = UDim.new(0, 14) }),
 })
+
+localize(keyBox, function() return T("Paste your access key") end, "PlaceholderText")
 
 keyBox.Focused:Connect(function()
     tween(keyStroke, 0.15, { Color = Theme.Accent })
@@ -604,11 +886,13 @@ local function makeButton(text, position, size, background, textColor)
     }, { corner(10) })
 end
 
-local getKey = makeButton("Get key", UDim2.fromOffset(20, 174), UDim2.fromOffset(122, 44), Theme.Button, Theme.Text)
+local getKey = makeButton("", UDim2.fromOffset(20, 174), UDim2.fromOffset(122, 44), Theme.Button, Theme.Text)
+setText(getKey, "Get key")
 create("UIStroke", { Color = Theme.Stroke, Thickness = 1, Transparency = 0.25, Parent = getKey })
 hoverable(getKey, Theme.Button, Theme.ButtonHover)
 
-local verify = makeButton("Verify & load", UDim2.fromOffset(154, 174), UDim2.new(1, -174, 0, 44), Theme.Accent, Theme.AccentText)
+local verify = makeButton("", UDim2.fromOffset(154, 174), UDim2.new(1, -174, 0, 44), Theme.Accent, Theme.AccentText)
+setText(verify, "Verify & load")
 hoverable(verify, Theme.Accent, Theme.AccentHover, function() return not busy end)
 
 -- Status line
@@ -624,7 +908,7 @@ local statusLabel = create("TextLabel", {
     Position = UDim2.fromOffset(38, 234),
     Size = UDim2.new(1, -60, 0, 32),
     BackgroundTransparency = 1,
-    Text = "Enter your key to continue.",
+    Text = "",
     TextColor3 = Theme.Muted,
     Font = Enum.Font.Gotham,
     TextSize = 13,
@@ -635,6 +919,15 @@ local statusLabel = create("TextLabel", {
     Parent = card,
 })
 
+languageChanged = function()
+    for object, entry in pairs(localized) do
+        if object.Parent then
+            object[entry[2]] = entry[1]()
+            if entry[2] == "Text" then fitThai(object) end
+        end
+    end
+end
+
 local StatusColors = {
     info = Theme.Muted,
     working = Theme.Accent,
@@ -642,11 +935,27 @@ local StatusColors = {
     error = Theme.Error,
 }
 
-local function setStatus(text, kind)
+-- `text` is English with {1}, {2}... for the values that follow `kind`; server messages
+-- without a translation show as sent.
+local function setStatus(text, kind, ...)
     local color = StatusColors[kind or "info"]
-    statusLabel.Text = text
+    setText(statusLabel, text, ...)
     statusLabel.TextColor3 = (kind == "info" or kind == nil) and Theme.Muted or color
     tween(statusDot, 0.15, { BackgroundColor3 = color })
+end
+setStatus("Enter your key to continue.", "info")
+
+chooseLanguage = function(preference)
+    languageMenu.Visible = false
+    writeText(LANGUAGE_FILE, preference)
+    local code = preference == "auto" and robloxLanguage() or preference
+    local handle = useLanguage(code)
+    task.spawn(function()
+        while not handle.done do task.wait(0.1) end
+        if screen.Parent and code ~= "en" and not handle.ok and not handle.cached then
+            setStatus("Could not download the {1} translation. Showing English for now.", "error", supportedLanguages[code])
+        end
+    end)
 end
 
 -- Footer: Discord invite (click to copy)
@@ -666,12 +975,14 @@ local discordButton = create("TextButton", {
     BackgroundColor3 = Theme.Button,
     BackgroundTransparency = 1,
     AutoButtonColor = false,
-    Text = "💬  Join our Discord  ·  dsc.gg/cookie-hub-rblx",
+    Text = "",
     TextColor3 = Theme.Muted,
     Font = Enum.Font.GothamMedium,
     TextSize = 12,
     Parent = card,
 }, { corner(8) })
+
+localize(discordButton, function() return "\u{1F4AC}  " .. T("Join our Discord") .. "  \u{B7}  dsc.gg/cookie-hub-rblx" end)
 
 discordButton.MouseEnter:Connect(function()
     tween(discordButton, 0.12, { BackgroundTransparency = 0, TextColor3 = Theme.Text })
@@ -691,6 +1002,7 @@ local function closeWindow(preserveStartup)
         releaseLoader()
     end
     if shared.CookieHubLoaderWindow == closeWindow then shared.CookieHubLoaderWindow = nil end
+    languageChanged = nil
     if not screen.Parent then return end
     for _, connection in ipairs(connections) do
         connection:Disconnect()
@@ -736,7 +1048,7 @@ discordButton.MouseButton1Click:Connect(function()
     if setclipboard and pcall(setclipboard, DISCORD_URL) then
         setStatus("Discord invite copied. Paste it into your browser to join.", "ok")
     else
-        setStatus("Clipboard unavailable. Join here: " .. DISCORD_URL, "info")
+        setStatus("Clipboard unavailable. Join here: {1}", "info", DISCORD_URL)
     end
 end)
 
@@ -745,14 +1057,14 @@ getKey.MouseButton1Click:Connect(function()
     if setclipboard and pcall(setclipboard, target) then
         setStatus("Key link copied. Open it in your browser to get your key.", "ok")
     else
-        setStatus("Clipboard unavailable. Open this link: " .. target, "info")
+        setStatus("Clipboard unavailable. Open this link: {1}", "info", target)
     end
 end)
 
 local function setBusy(state)
     busy = state
     if not state then releaseLoader() end
-    verify.Text = state and "Checking…" or "Verify & load"
+    setText(verify, state and "Checking\u{2026}" or "Verify & load")
     tween(verify, 0.12, { BackgroundColor3 = state and Theme.ButtonHover or Theme.Accent })
     verify.TextColor3 = state and Theme.Muted or Theme.AccentText
 end
@@ -772,7 +1084,7 @@ local function verifyAndLoad()
     loaderState.state = "starting"
     loaderState.cancelled = false
     setBusy(true)
-    setStatus("Checking key…", "working")
+    setStatus("Checking key\u{2026}", "working")
 
     local ok, code, tokenResult = pcall(post, "/v1/token", {
         key = key,
@@ -781,7 +1093,7 @@ local function verifyAndLoad()
         player_id = PLAYER_ID,
         client_version = CLIENT_VERSION,
     }, function(attempt)
-        setStatus("Connection interrupted. Retrying verification (" .. attempt .. "/4)…", "working")
+        setStatus("Connection interrupted. Retrying verification ({1}/4)\u{2026}", "working", attempt)
     end)
     if loaderState.cancelled or not screen.Parent then return end
     if not ok or type(tokenResult) ~= "table" or code ~= 200 or not tokenResult.authorized or type(tokenResult.token) ~= "string" then
@@ -789,7 +1101,7 @@ local function verifyAndLoad()
             clearSavedKey(key)
             if keyBox.Text:match("^%s*(.-)%s*$") == key then keyBox.Text = "" end
         end
-        local reason = type(tokenResult) == "table" and (tokenResult.error or tokenResult.reason) or nil
+        local reason = type(tokenResult) == "table" and (ReasonText[tokenResult.reason] or tokenResult.error or tokenResult.reason) or nil
         setStatus(tostring(reason or (ok and "Key was not accepted.") or code), "error")
         setBusy(false)
         return
@@ -797,11 +1109,11 @@ local function verifyAndLoad()
 
     -- Save only after acceptance, even if the subsequent script download fails.
     local saved = saveKey(key)
-    setStatus(saved and "Key accepted. Downloading script…" or "Key accepted. Saving unavailable; downloading…", "working")
+    setStatus(saved and "Key accepted. Downloading script\u{2026}" or "Key accepted. Saving unavailable; downloading\u{2026}", "working")
 
     -- Send the short-lived token in JSON: this executor drops Body when Authorization is set.
-    local loadedRequest, loadCode, result = pcall(post, "/v1/scripts/load/" .. HttpService:UrlEncode(PLACE_ID), { token = tokenResult.token, player_id = PLAYER_ID, client_version = CLIENT_VERSION }, function(attempt)
-        setStatus("Connection interrupted. Retrying script download (" .. attempt .. "/4)…", "working")
+    local loadedRequest, loadCode, result = pcall(post, "/v1/scripts/load/" .. HttpService:UrlEncode(PLACE_ID), { token = tokenResult.token, player_id = PLAYER_ID, client_version = CLIENT_VERSION, build_channel = REQUESTED_CHANNEL }, function(attempt)
+        setStatus("Connection interrupted. Retrying script download ({1}/4)\u{2026}", "working", attempt)
     end)
     if loaderState.cancelled or not screen.Parent then return end
     if not loadedRequest or type(result) ~= "table" or loadCode ~= 200 or not result.authorized or type(result.source) ~= "string" then
@@ -814,12 +1126,12 @@ local function verifyAndLoad()
     local compiled, payload, compileErr = pcall(loadstring, result.source, "=CookieHub/Place/" .. PLACE_ID)
     if not compiled or type(payload) ~= "function" then
         reportLoadFailure(result.analytics, "compile_failed")
-        setStatus("Downloaded script could not compile: " .. tostring(compiled and compileErr or payload), "error")
+        setStatus("Downloaded script could not compile: {1}", "error", tostring(compiled and compileErr or payload))
         setBusy(false)
         return
     end
 
-    setStatus("Verified. Loading Cookie Hub…", "ok")
+    setStatus("Verified. Loading Cookie Hub\u{2026}", "ok")
 
     -- One-time handoff: the payload reads and clears this immediately, then
     -- re-validates the key itself. We clear it again afterwards in case it never ran.
@@ -830,7 +1142,7 @@ local function verifyAndLoad()
 
     if not ran then
         reportLoadFailure(result.analytics, "runtime_failed")
-        setStatus("Script failed: " .. tostring(runErr), "error")
+        setStatus("Script failed: {1}", "error", tostring(runErr))
         setBusy(false)
         return
     end
@@ -852,7 +1164,7 @@ local function tryVerifyAndLoad()
         shared.ScriptAccess = nil
         releaseLoader()
         if screen.Parent then
-            setStatus("Loader failed: " .. tostring(failure), "error")
+            setStatus("Loader failed: {1}", "error", tostring(failure))
             setBusy(false)
         end
     end
@@ -871,7 +1183,7 @@ tween(card, 0.25, { GroupTransparency = 0 })
 tween(scale, 0.25, { Scale = 1 })
 
 if savedKey then
-    setStatus("Checking saved key…", "working")
+    setStatus("Checking saved key\u{2026}", "working")
     task.spawn(tryVerifyAndLoad)
 elseif type(readfile) ~= "function" or type(writefile) ~= "function" then
     setStatus("Enter your key. This executor cannot save keys between sessions.", "info")
