@@ -300,6 +300,7 @@
   "Checking key access": "กำลังตรวจสิทธิ์คีย์",
   "Checking the last stops ({1} picked)": "กำลังตรวจจุดแวะล่าสุด (เก็บแล้ว {1})",
   "Checking this executor…": "กำลังตรวจ executor นี้…",
+  "Checking what to do next": "กำลังตรวจสอบว่าจะทำอะไรต่อ",
   "Checking…": "กำลังตรวจสอบ…",
   "Checks nearby selected trees every 0.05 seconds; hits multiple trees independently using your equipped axe's cooldown": "ตรวจต้นไม้ที่เลือกใกล้ตัวทุก 0.05 วินาที ฟันหลายต้นแยกกันตามคูลดาวน์ของขวานที่ถือ",
   "Chest ESP": "ESP หีบ",

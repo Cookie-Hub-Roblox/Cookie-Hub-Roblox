@@ -300,6 +300,7 @@
   "Checking key access": "キーのアクセスを確認中",
   "Checking the last stops ({1} picked)": "最後の地点を確認中（{1}個回収）",
   "Checking this executor…": "このエグゼキューターを確認中…",
+  "Checking what to do next": "次にやることを確認中",
   "Checking…": "確認中…",
   "Checks nearby selected trees every 0.05 seconds; hits multiple trees independently using your equipped axe's cooldown": "近くの選択した木を0.05秒ごとに確認し、装備中の斧のクールダウンで複数の木を個別に叩きます",
   "Chest ESP": "チェストESP",

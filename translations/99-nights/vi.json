@@ -300,6 +300,7 @@
   "Checking key access": "Đang kiểm tra quyền truy cập bằng khóa",
   "Checking the last stops ({1} picked)": "Đang kiểm tra các điểm dừng cuối (đã hái {1})",
   "Checking this executor…": "Đang kiểm tra executor này…",
+  "Checking what to do next": "Đang kiểm tra việc cần làm tiếp theo",
   "Checking…": "Đang kiểm tra…",
   "Checks nearby selected trees every 0.05 seconds; hits multiple trees independently using your equipped axe's cooldown": "Kiểm tra cây đã chọn gần đó mỗi 0,05 giây; chặt nhiều cây độc lập theo thời gian hồi của rìu đang cầm",
   "Chest ESP": "ESP rương",
