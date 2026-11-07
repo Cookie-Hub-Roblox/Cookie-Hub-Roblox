@@ -1579,7 +1579,6 @@
   "The Halloween event is not active": "ハロウィンイベントは開催されていません",
   "The Hammer was already bought from the Toolsmith; it can only be bought once": "Hammerは道具屋で購入済みです。購入できるのは1回だけです",
   "The Items folder is not loaded.": "Items フォルダーが読み込まれていません。",
-  "The Log Wall model loads once you own a Log Wall Blueprint": "Log Wall の設計図を持つと Log Wall のモデルが読み込まれます",
   "The Prize Booth does not offer {1} (it offers {2})": "Prize Booth に {1} はありません ({2} があります)",
   "The Prize Booth offered no rewards": "Prize Booth に景品がありません",
   "The Prize Booth refused to give {1}": "Prize Booth が {1} を渡しませんでした",
