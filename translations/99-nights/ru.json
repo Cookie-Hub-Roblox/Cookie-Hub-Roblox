@@ -1348,7 +1348,7 @@
   "Pollination Strength": "Сила опыления",
   "Pollination strength {1}%, needs {2} honey": "Сила опыления {1}%, нужно {2} мёда",
   "Pollination strength: {1}% (needs {2} honey, full at {3})": "Сила опыления: {1}% (нужно {2} мёда, полная при {3})",
-  "Pollination: done, the Giant Beehive has fully bloomed": "Опыление: готово, Giant Beehive полностью расцвёл",
+  "Pollination: done, the Giant Beehive has fully bloomed (max strength needs {1} honey)": "Опыление: готово, Giant Beehive полностью расцвёл (для макс. силы нужно {1} мёда)",
   "Pollination: running now": "Опыление: идёт сейчас",
   "Pond": "Пруд",
   "Pond ({1})": "Пруд ({1})",

@@ -1348,7 +1348,7 @@
   "Pollination Strength": "Pollination Strength",
   "Pollination strength {1}%, needs {2} honey": "Lakas ng pollination {1}%, kailangan ng {2} honey",
   "Pollination strength: {1}% (needs {2} honey, full at {3})": "Lakas ng pollination: {1}% (kailangan ng {2} honey, full sa {3})",
-  "Pollination: done, the Giant Beehive has fully bloomed": "Pollination: tapos na, ganap nang namukadkad ang Giant Beehive",
+  "Pollination: done, the Giant Beehive has fully bloomed (max strength needs {1} honey)": "Pollination: tapos na, ganap nang namukadkad ang Giant Beehive (kailangan ng max strength ang {1} honey)",
   "Pollination: running now": "Pollination: tumatakbo ngayon",
   "Pond": "Pond",
   "Pond ({1})": "Pond ({1})",

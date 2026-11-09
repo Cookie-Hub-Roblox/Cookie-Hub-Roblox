@@ -1348,7 +1348,7 @@
   "Pollination Strength": "Sức thụ phấn",
   "Pollination strength {1}%, needs {2} honey": "Sức thụ phấn {1}%, cần {2} mật ong",
   "Pollination strength: {1}% (needs {2} honey, full at {3})": "Sức thụ phấn: {1}% (cần {2} mật ong, tối đa ở {3})",
-  "Pollination: done, the Giant Beehive has fully bloomed": "Thụ phấn: xong, Giant Beehive đã nở rộ hoàn toàn",
+  "Pollination: done, the Giant Beehive has fully bloomed (max strength needs {1} honey)": "Thụ phấn: xong, Giant Beehive đã nở rộ hoàn toàn (sức tối đa cần {1} mật ong)",
   "Pollination: running now": "Thụ phấn: đang diễn ra",
   "Pond": "Ao",
   "Pond ({1})": "Ao ({1})",

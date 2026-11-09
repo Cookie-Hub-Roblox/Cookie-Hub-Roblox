@@ -1348,7 +1348,7 @@
   "Pollination Strength": "授粉強度",
   "Pollination strength {1}%, needs {2} honey": "授粉強度 {1}%，需要 {2} 蜂蜜",
   "Pollination strength: {1}% (needs {2} honey, full at {3})": "授粉強度：{1}%（需要 {2} 蜂蜜，{3} 時最強）",
-  "Pollination: done, the Giant Beehive has fully bloomed": "授粉：完成，Giant Beehive 已完全盛開",
+  "Pollination: done, the Giant Beehive has fully bloomed (max strength needs {1} honey)": "授粉：完成，Giant Beehive 已完全盛開（最高強度需要 {1} 蜂蜜）",
   "Pollination: running now": "授粉：進行中",
   "Pond": "Pond",
   "Pond ({1})": "Pond（{1}）",

@@ -1348,7 +1348,7 @@
   "Pollination Strength": "Kekuatan Penyerbukan",
   "Pollination strength {1}%, needs {2} honey": "Kekuatan penyerbukan {1}%, butuh {2} madu",
   "Pollination strength: {1}% (needs {2} honey, full at {3})": "Kekuatan penyerbukan: {1}% (butuh {2} madu, penuh di {3})",
-  "Pollination: done, the Giant Beehive has fully bloomed": "Penyerbukan: selesai, Giant Beehive sudah mekar penuh",
+  "Pollination: done, the Giant Beehive has fully bloomed (max strength needs {1} honey)": "Penyerbukan: selesai, Giant Beehive sudah mekar penuh (kekuatan maksimal butuh {1} madu)",
   "Pollination: running now": "Penyerbukan: sedang berjalan",
   "Pond": "Kolam",
   "Pond ({1})": "Kolam ({1})",

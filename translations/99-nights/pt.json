@@ -1348,7 +1348,7 @@
   "Pollination Strength": "Força de Polinização",
   "Pollination strength {1}%, needs {2} honey": "Força de polinização {1}%, precisa de {2} de mel",
   "Pollination strength: {1}% (needs {2} honey, full at {3})": "Força de polinização: {1}% (precisa de {2} de mel, total com {3})",
-  "Pollination: done, the Giant Beehive has fully bloomed": "Polinização: concluída, a Giant Beehive floresceu por completo",
+  "Pollination: done, the Giant Beehive has fully bloomed (max strength needs {1} honey)": "Polinização: concluída, a Giant Beehive floresceu por completo (a força máxima precisa de {1} de mel)",
   "Pollination: running now": "Polinização: em andamento",
   "Pond": "Lagoa",
   "Pond ({1})": "Lagoa ({1})",

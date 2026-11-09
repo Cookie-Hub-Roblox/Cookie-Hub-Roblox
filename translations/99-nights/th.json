@@ -1348,7 +1348,7 @@
   "Pollination Strength": "ความแรงของการผสมเกสร",
   "Pollination strength {1}%, needs {2} honey": "ความแรงผสมเกสร {1}% ต้องใช้น้ำผึ้ง {2}",
   "Pollination strength: {1}% (needs {2} honey, full at {3})": "ความแรงผสมเกสร: {1}% (ต้องใช้น้ำผึ้ง {2} เต็มที่ที่ {3})",
-  "Pollination: done, the Giant Beehive has fully bloomed": "การผสมเกสร: เสร็จแล้ว Giant Beehive บานเต็มที่แล้ว",
+  "Pollination: done, the Giant Beehive has fully bloomed (max strength needs {1} honey)": "การผสมเกสร: เสร็จแล้ว Giant Beehive บานเต็มที่แล้ว (ความแรงสูงสุดต้องใช้น้ำผึ้ง {1})",
   "Pollination: running now": "การผสมเกสร: กำลังดำเนินอยู่",
   "Pond": "สระน้ำ",
   "Pond ({1})": "สระน้ำ ({1})",

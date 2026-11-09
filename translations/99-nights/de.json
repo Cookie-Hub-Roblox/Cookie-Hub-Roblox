@@ -1348,7 +1348,7 @@
   "Pollination Strength": "Bestäubungsstärke",
   "Pollination strength {1}%, needs {2} honey": "Bestäubungsstärke {1}%, braucht {2} Honig",
   "Pollination strength: {1}% (needs {2} honey, full at {3})": "Bestäubungsstärke: {1}% (braucht {2} Honig, voll bei {3})",
-  "Pollination: done, the Giant Beehive has fully bloomed": "Bestäubung: fertig, der Giant Beehive ist voll erblüht",
+  "Pollination: done, the Giant Beehive has fully bloomed (max strength needs {1} honey)": "Bestäubung: fertig, der Giant Beehive ist voll erblüht (maximale Stärke braucht {1} Honig)",
   "Pollination: running now": "Bestäubung: läuft gerade",
   "Pond": "Teich",
   "Pond ({1})": "Teich ({1})",
