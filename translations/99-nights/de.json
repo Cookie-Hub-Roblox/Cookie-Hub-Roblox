@@ -99,7 +99,7 @@
   "Anvil delivery cancelled": "Amboss-Lieferung abgebrochen",
   "Anvil hologram has no usable position": "Das Amboss-Hologramm hat keine nutzbare Position",
   "Anvil hologram is not loaded": "Das Amboss-Hologramm ist nicht geladen",
-  "Any class. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Jede Klasse. Stew aus den gewählten Speisen; Carrot Cake aus Cake und 2 Carrots.",
+  "Any class. Selected dishes take turns, skipping any whose food is not loaded; select none to leave the pot off. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Jede Klasse. Gewählte Gerichte wechseln sich ab; eines ohne geladene Zutat wird übersprungen. Ohne Auswahl bleibt der Topf aus. Stew aus den gewählten Speisen; Carrot Cake aus Cake und 2 Carrots.",
   "Appearance": "Aussehen",
   "Apply the saved jump power through game changes and respawns. Turning off restores the game's power and jump mode.": "Wendet die gespeicherte Sprungkraft trotz Spieländerungen und Respawns an. Ausschalten stellt Sprungkraft und -modus des Spiels wieder her.",
   "Apply the saved speed, including while sprinting. Turning off restores the game's last observed speed.": "Wendet die gespeicherte Geschwindigkeit an, auch beim Sprinten. Ausschalten stellt die zuletzt gesehene Spielgeschwindigkeit wieder her.",

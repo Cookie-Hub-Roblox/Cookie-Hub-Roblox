@@ -99,7 +99,7 @@
   "Anvil delivery cancelled": "Đã hủy giao đe",
   "Anvil hologram has no usable position": "Hình ảnh ba chiều của đe không có vị trí dùng được",
   "Anvil hologram is not loaded": "Hình ảnh ba chiều của đe chưa tải",
-  "Any class. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Mọi lớp. Stew dùng thực phẩm đã chọn; Carrot Cake dùng Cake và 2 Carrot.",
+  "Any class. Selected dishes take turns, skipping any whose food is not loaded; select none to leave the pot off. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Mọi lớp. Các món đã chọn được nấu lần lượt, món chưa có thực phẩm được tải sẽ bị bỏ qua; không chọn món nào thì nồi sẽ tắt. Stew dùng thực phẩm đã chọn; Carrot Cake dùng Cake và 2 Carrot.",
   "Appearance": "Giao diện",
   "Apply the saved jump power through game changes and respawns. Turning off restores the game's power and jump mode.": "Giữ sức nhảy đã lưu qua các thay đổi của game và khi hồi sinh. Tắt sẽ trả lại sức nhảy và chế độ nhảy của game.",
   "Apply the saved speed, including while sprinting. Turning off restores the game's last observed speed.": "Giữ tốc độ đã lưu, kể cả khi chạy nhanh. Tắt sẽ trả lại tốc độ gần nhất của game.",

@@ -99,7 +99,7 @@
   "Anvil delivery cancelled": "ยกเลิกการส่งทั่งแล้ว",
   "Anvil hologram has no usable position": "โฮโลแกรมทั่งไม่มีตำแหน่งที่ใช้ได้",
   "Anvil hologram is not loaded": "ยังไม่โหลดโฮโลแกรมทั่ง",
-  "Any class. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "ทุกคลาส Stew ใช้อาหารที่เลือก ส่วน Carrot Cake ใช้ Cake และ Carrot 2 ชิ้น",
+  "Any class. Selected dishes take turns, skipping any whose food is not loaded; select none to leave the pot off. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "ทุกคลาส เมนูที่เลือกจะทำสลับกัน และข้ามเมนูที่อาหารไม่ได้โหลดอยู่ ถ้าไม่เลือกเลย หม้อจะปิดอยู่ Stew ใช้อาหารที่เลือก ส่วน Carrot Cake ใช้ Cake และ Carrot 2 ชิ้น",
   "Appearance": "รูปลักษณ์",
   "Apply the saved jump power through game changes and respawns. Turning off restores the game's power and jump mode.": "ใช้แรงกระโดดที่บันทึกไว้ต่อเนื่องแม้เกมเปลี่ยนค่าหรือเกิดใหม่ ปิดเพื่อคืนแรงและโหมดกระโดดของเกม",
   "Apply the saved speed, including while sprinting. Turning off restores the game's last observed speed.": "ใช้ความเร็วที่บันทึกไว้ รวมถึงตอนวิ่งเร็ว ปิดเพื่อคืนความเร็วล่าสุดของเกม",

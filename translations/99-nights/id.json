@@ -99,7 +99,7 @@
   "Anvil delivery cancelled": "Pengiriman landasan dibatalkan",
   "Anvil hologram has no usable position": "Hologram landasan tidak punya posisi yang bisa dipakai",
   "Anvil hologram is not loaded": "Hologram landasan belum dimuat",
-  "Any class. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Semua kelas. Stew dari makanan yang dipilih; Carrot Cake dari Cake dan 2 Carrot.",
+  "Any class. Selected dishes take turns, skipping any whose food is not loaded; select none to leave the pot off. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Semua kelas. Hidangan yang dipilih bergiliran, dan yang makanannya belum dimuat dilewati; tanpa pilihan, panci tetap mati. Stew dari makanan yang dipilih; Carrot Cake dari Cake dan 2 Carrot.",
   "Appearance": "Tampilan",
   "Apply the saved jump power through game changes and respawns. Turning off restores the game's power and jump mode.": "Menerapkan kekuatan lompat tersimpan meski game berubah dan saat respawn. Mematikan mengembalikan kekuatan dan mode lompat game.",
   "Apply the saved speed, including while sprinting. Turning off restores the game's last observed speed.": "Menerapkan kecepatan tersimpan, termasuk saat berlari. Mematikan mengembalikan kecepatan terakhir game.",

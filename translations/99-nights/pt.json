@@ -99,7 +99,7 @@
   "Anvil delivery cancelled": "Entrega da bigorna cancelada",
   "Anvil hologram has no usable position": "O holograma da bigorna não tem posição utilizável",
   "Anvil hologram is not loaded": "O holograma da bigorna não carregou",
-  "Any class. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Qualquer classe. Stew usa as comidas selecionadas; Carrot Cake usa Cake e 2 Carrots.",
+  "Any class. Selected dishes take turns, skipping any whose food is not loaded; select none to leave the pot off. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Qualquer classe. Os pratos selecionados se revezam, e o que não tiver a comida carregada é pulado; sem seleção, a panela fica desligada. Stew usa as comidas selecionadas; Carrot Cake usa Cake e 2 Carrots.",
   "Appearance": "Aparência",
   "Apply the saved jump power through game changes and respawns. Turning off restores the game's power and jump mode.": "Aplica a força de pulo salva mesmo com mudanças do jogo e renascimentos. Desligar restaura a força e o modo de pulo do jogo.",
   "Apply the saved speed, including while sprinting. Turning off restores the game's last observed speed.": "Aplica a velocidade salva, inclusive correndo. Desligar restaura a última velocidade observada do jogo.",

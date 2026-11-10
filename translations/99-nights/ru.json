@@ -99,7 +99,7 @@
   "Anvil delivery cancelled": "Доставка наковальни отменена",
   "Anvil hologram has no usable position": "У голограммы наковальни нет подходящей позиции",
   "Anvil hologram is not loaded": "Голограмма наковальни не загружена",
-  "Any class. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Любой класс. Stew готовится из выбранной еды; Carrot Cake — из Cake и 2 Carrot.",
+  "Any class. Selected dishes take turns, skipping any whose food is not loaded; select none to leave the pot off. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Любой класс. Выбранные блюда готовятся по очереди, блюдо без загруженной еды пропускается; если ничего не выбрано, котёл выключен. Stew готовится из выбранной еды; Carrot Cake — из Cake и 2 Carrot.",
   "Appearance": "Внешний вид",
   "Apply the saved jump power through game changes and respawns. Turning off restores the game's power and jump mode.": "Применяет сохранённую силу прыжка при изменениях игры и возрождении. Выключение возвращает силу и режим прыжка игры.",
   "Apply the saved speed, including while sprinting. Turning off restores the game's last observed speed.": "Применяет сохранённую скорость, в том числе при беге. Выключение возвращает последнюю замеченную скорость игры.",

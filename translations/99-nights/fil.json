@@ -99,7 +99,7 @@
   "Anvil delivery cancelled": "Kinansela ang paghatid ng Anvil",
   "Anvil hologram has no usable position": "Walang magagamit na posisyon ang hologram ng Anvil",
   "Anvil hologram is not loaded": "Hindi pa naka-load ang hologram ng Anvil",
-  "Any class. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Kahit anong class. Ang Stew ay mula sa mga napiling pagkain; ang Carrot Cake ay mula sa Cake at 2 Carrot.",
+  "Any class. Selected dishes take turns, skipping any whose food is not loaded; select none to leave the pot off. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Kahit anong class. Nagsasalitan ang mga napiling putahe, at nilalaktawan ang walang na-load na pagkain; kapag walang pinili, naka-off ang pot. Ang Stew ay mula sa mga napiling pagkain; ang Carrot Cake ay mula sa Cake at 2 Carrot.",
   "Appearance": "Itsura",
   "Apply the saved jump power through game changes and respawns. Turning off restores the game's power and jump mode.": "Ina-apply ang naka-save na jump power kahit magbago ang laro o mag-respawn. Kapag in-off, babalik ang jump power at jump mode ng laro.",
   "Apply the saved speed, including while sprinting. Turning off restores the game's last observed speed.": "Ina-apply ang naka-save na speed, pati habang tumatakbo. Kapag in-off, babalik ang huling nakitang speed ng laro.",

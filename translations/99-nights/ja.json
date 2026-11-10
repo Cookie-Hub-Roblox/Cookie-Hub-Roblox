@@ -99,7 +99,7 @@
   "Anvil delivery cancelled": "Anvil の配送をキャンセルしました",
   "Anvil hologram has no usable position": "Anvil のホログラムに使用可能な位置がありません",
   "Anvil hologram is not loaded": "Anvil のホログラムが読み込まれていません",
-  "Any class. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "どの職業でも可。Stewは選択した食材、Carrot CakeはCakeとCarrot 2個で作ります。",
+  "Any class. Selected dishes take turns, skipping any whose food is not loaded; select none to leave the pot off. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "どの職業でも可。選択した料理を順番に作り、食材が読み込まれていない料理は飛ばします。何も選択しないと鍋はオフのままです。Stewは選択した食材、Carrot CakeはCakeとCarrot 2個で作ります。",
   "Appearance": "外観",
   "Apply the saved jump power through game changes and respawns. Turning off restores the game's power and jump mode.": "保存したジャンプ力をゲーム側の変更やリスポーン後も適用します。オフにするとゲームのジャンプ力とジャンプモードに戻ります。",
   "Apply the saved speed, including while sprinting. Turning off restores the game's last observed speed.": "保存した速度をダッシュ中も含めて適用します。オフにすると最後に確認したゲームの速度に戻ります。",

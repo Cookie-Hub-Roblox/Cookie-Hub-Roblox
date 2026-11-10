@@ -99,7 +99,7 @@
   "Anvil delivery cancelled": "Entrega del yunque cancelada",
   "Anvil hologram has no usable position": "El holograma del yunque no tiene una posición válida",
   "Anvil hologram is not loaded": "El holograma del yunque no está cargado",
-  "Any class. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Cualquier clase. Stew usa las comidas seleccionadas; Carrot Cake usa Cake y 2 Carrots.",
+  "Any class. Selected dishes take turns, skipping any whose food is not loaded; select none to leave the pot off. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "Cualquier clase. Los platos seleccionados se turnan y se salta el que no tenga su comida cargada; sin selección, la olla queda apagada. Stew usa las comidas seleccionadas; Carrot Cake usa Cake y 2 Carrots.",
   "Appearance": "Apariencia",
   "Apply the saved jump power through game changes and respawns. Turning off restores the game's power and jump mode.": "Aplica la potencia de salto guardada pese a cambios del juego y reapariciones. Al desactivarlo se restaura la potencia y el modo de salto del juego.",
   "Apply the saved speed, including while sprinting. Turning off restores the game's last observed speed.": "Aplica la velocidad guardada, también al esprintar. Al desactivarlo se restaura la última velocidad observada del juego.",
