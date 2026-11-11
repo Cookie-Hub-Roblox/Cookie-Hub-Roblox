@@ -1090,7 +1090,7 @@
   "Meteor Materials": "Vật liệu thiên thạch",
   "Mine loaded nodes and deliver materials until they are within 90 studs of the anvil.": "Khai thác các mỏ đã tải và giao vật liệu cho đến khi chúng cách đe trong 90 studs.",
   "Minimum duration to report; default 50 ms.": "Thời lượng tối thiểu để báo cáo; mặc định 50 ms.",
-  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fastest: every hive to level 3; uses the most flowers.": "Minimum: ít hoa nhất để tổ ong chứa đủ mật cho sức thụ phấn; chậm nhất. Optimal: thêm vài hoa ở chỗ tiết kiệm nhiều thời gian nhất. Fastest: mọi tổ ong lên cấp 3; tốn nhiều hoa nhất.",
+  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fast (default): from Minimum, a hive goes up a level whenever that saves at least 1 minute. Fastest: every hive to level 3; uses the most flowers.": "Minimum: ít hoa nhất để tổ ong chứa đủ mật cho sức thụ phấn; chậm nhất. Optimal: thêm vài hoa ở chỗ tiết kiệm nhiều thời gian nhất. Fast (mặc định): từ Minimum, một tổ ong lên một cấp mỗi khi việc đó tiết kiệm ít nhất 1 phút. Fastest: mọi tổ ong lên cấp 3; tốn nhiều hoa nhất.",
   "Minutes between picking and planting runs. 1 by default.": "Số phút giữa các lần hái và trồng. Mặc định 1.",
   "Misc": "Khác",
   "Missing executor functions": "Hàm executor còn thiếu",

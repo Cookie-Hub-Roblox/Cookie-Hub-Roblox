@@ -1090,7 +1090,7 @@
   "Meteor Materials": "Materiales de meteorito",
   "Mine loaded nodes and deliver materials until they are within 90 studs of the anvil.": "Minar nodos cargados y entregar materiales hasta que estén a 90 studs del yunque.",
   "Minimum duration to report; default 50 ms.": "Duración mínima para informar; por defecto 50 ms.",
-  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fastest: every hive to level 3; uses the most flowers.": "Minimum: las menos flores para que las colmenas guarden la miel de la fuerza de polinización; lo más lento. Optimal: unas flores más donde ahorran más tiempo. Fastest: todas las colmenas al nivel 3; usa más flores.",
+  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fast (default): from Minimum, a hive goes up a level whenever that saves at least 1 minute. Fastest: every hive to level 3; uses the most flowers.": "Minimum: las menos flores para que las colmenas guarden la miel de la fuerza de polinización; lo más lento. Optimal: unas flores más donde ahorran más tiempo. Fast (predeterminado): desde Minimum, una colmena sube un nivel siempre que eso ahorre al menos 1 minuto. Fastest: todas las colmenas al nivel 3; usa más flores.",
   "Minutes between picking and planting runs. 1 by default.": "Minutos entre cada recogida y plantación. 1 por defecto.",
   "Misc": "Varios",
   "Missing executor functions": "Funciones del executor que faltan",

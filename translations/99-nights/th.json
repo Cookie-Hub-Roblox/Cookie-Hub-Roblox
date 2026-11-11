@@ -1090,7 +1090,7 @@
   "Meteor Materials": "วัสดุอุกกาบาต",
   "Mine loaded nodes and deliver materials until they are within 90 studs of the anvil.": "ขุดโหนดที่โหลดแล้วและส่งวัสดุจนอยู่ในระยะ 90 studs จากทั่ง",
   "Minimum duration to report; default 50 ms.": "ระยะเวลาขั้นต่ำที่จะรายงาน ค่าเริ่มต้น 50 มิลลิวินาที",
-  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fastest: every hive to level 3; uses the most flowers.": "Minimum: ใช้ดอกไม้น้อยที่สุดที่ทำให้รังผึ้งเก็บน้ำผึ้งได้พอสำหรับความแรงของการผสมเกสร ช้าที่สุด Optimal: เพิ่มดอกไม้อีกนิดในจุดที่ประหยัดเวลาได้มากที่สุด Fastest: ทุกรังผึ้งถึงระดับ 3 ใช้ดอกไม้มากที่สุด",
+  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fast (default): from Minimum, a hive goes up a level whenever that saves at least 1 minute. Fastest: every hive to level 3; uses the most flowers.": "Minimum: ใช้ดอกไม้น้อยที่สุดที่ทำให้รังผึ้งเก็บน้ำผึ้งได้พอสำหรับความแรงของการผสมเกสร ช้าที่สุด Optimal: เพิ่มดอกไม้อีกนิดในจุดที่ประหยัดเวลาได้มากที่สุด Fast (ค่าเริ่มต้น): เริ่มจาก Minimum แล้วอัปรังผึ้งขึ้นหนึ่งระดับทุกครั้งที่ช่วยประหยัดเวลาได้อย่างน้อย 1 นาที Fastest: ทุกรังผึ้งถึงระดับ 3 ใช้ดอกไม้มากที่สุด",
   "Minutes between picking and planting runs. 1 by default.": "จำนวนนาทีระหว่างรอบเก็บและปลูก ค่าเริ่มต้น 1",
   "Misc": "เบ็ดเตล็ด",
   "Missing executor functions": "ฟังก์ชัน executor ที่ขาด",

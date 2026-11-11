@@ -1090,7 +1090,7 @@
   "Meteor Materials": "Mga Meteor Material",
   "Mine loaded nodes and deliver materials until they are within 90 studs of the anvil.": "Magmina ng mga naka-load na node at maghatid ng materials hanggang nasa loob ng 90 studs mula sa anvil.",
   "Minimum duration to report; default 50 ms.": "Pinakamababang tagal na ire-report; default 50 ms.",
-  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fastest: every hive to level 3; uses the most flowers.": "Minimum: pinakakaunting flowers para kayanin ng mga hive ang honey ng Pollination Strength; pinakamabagal. Optimal: ilang dagdag na flowers kung saan pinakamalaki ang natitipid na oras. Fastest: lahat ng hive sa level 3; pinakamaraming flowers.",
+  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fast (default): from Minimum, a hive goes up a level whenever that saves at least 1 minute. Fastest: every hive to level 3; uses the most flowers.": "Minimum: pinakakaunting flowers para kayanin ng mga hive ang honey ng Pollination Strength; pinakamabagal. Optimal: ilang dagdag na flowers kung saan pinakamalaki ang natitipid na oras. Fast (default): mula sa Minimum, tataas ng isang level ang hive tuwing makakatipid ito ng kahit 1 minuto. Fastest: lahat ng hive sa level 3; pinakamaraming flowers.",
   "Minutes between picking and planting runs. 1 by default.": "Minuto sa pagitan ng bawat pick at plant. 1 ang default.",
   "Misc": "Misc",
   "Missing executor functions": "Mga nawawalang executor function",

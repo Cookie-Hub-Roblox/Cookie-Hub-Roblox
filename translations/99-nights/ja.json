@@ -1090,7 +1090,7 @@
   "Meteor Materials": "隕石の素材",
   "Mine loaded nodes and deliver materials until they are within 90 studs of the anvil.": "読み込み済みの鉱床を採掘し、素材がAnvilから90スタッド以内になるまで届けます。",
   "Minimum duration to report; default 50 ms.": "報告する最小時間。デフォルトは50 ms。",
-  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fastest: every hive to level 3; uses the most flowers.": "Minimum: 巣箱が受粉の強さに必要なハチミツを貯められる最少の花。最も遅い。Optimal: 最も時間を節約できる所に少しだけ多く植える。Fastest: すべての巣箱をレベル3に。花を最も使う。",
+  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fast (default): from Minimum, a hive goes up a level whenever that saves at least 1 minute. Fastest: every hive to level 3; uses the most flowers.": "Minimum: 巣箱が受粉の強さに必要なハチミツを貯められる最少の花。最も遅い。Optimal: 最も時間を節約できる所に少しだけ多く植える。Fast(初期設定): Minimumから始めて、1分以上短縮できるたびに巣箱を1レベル上げる。Fastest: すべての巣箱をレベル3に。花を最も使う。",
   "Minutes between picking and planting runs. 1 by default.": "摘み取りと植え付けの間隔(分)。初期値は1。",
   "Misc": "その他",
   "Missing executor functions": "不足しているエグゼキューター関数",

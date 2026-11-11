@@ -1090,7 +1090,7 @@
   "Meteor Materials": "Meteor-Materialien",
   "Mine loaded nodes and deliver materials until they are within 90 studs of the anvil.": "Geladene Vorkommen abbauen und Materialien liefern, bis sie innerhalb von 90 studs vom Amboss liegen.",
   "Minimum duration to report; default 50 ms.": "Mindestdauer für die Meldung; Standard 50 ms.",
-  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fastest: every hive to level 3; uses the most flowers.": "Minimum: so wenige Blumen, dass die Bienenstöcke den Honig der Bestäubungsstärke fassen; am langsamsten. Optimal: ein paar Blumen mehr, wo sie am meisten Zeit sparen. Fastest: jeder Bienenstock auf Stufe 3; verbraucht die meisten Blumen.",
+  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fast (default): from Minimum, a hive goes up a level whenever that saves at least 1 minute. Fastest: every hive to level 3; uses the most flowers.": "Minimum: so wenige Blumen, dass die Bienenstöcke den Honig der Bestäubungsstärke fassen; am langsamsten. Optimal: ein paar Blumen mehr, wo sie am meisten Zeit sparen. Fast (Standard): ausgehend von Minimum steigt ein Bienenstock eine Stufe auf, wann immer das mindestens 1 Minute spart. Fastest: jeder Bienenstock auf Stufe 3; verbraucht die meisten Blumen.",
   "Minutes between picking and planting runs. 1 by default.": "Minuten zwischen den Sammel- und Pflanzläufen. Standard 1.",
   "Misc": "Sonstiges",
   "Missing executor functions": "Fehlende Executor-Funktionen",

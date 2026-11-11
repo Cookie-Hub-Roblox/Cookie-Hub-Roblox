@@ -1090,7 +1090,7 @@
   "Meteor Materials": "Material Meteor",
   "Mine loaded nodes and deliver materials until they are within 90 studs of the anvil.": "Menambang node yang dimuat dan mengantar material sampai berada dalam 90 studs dari landasan.",
   "Minimum duration to report; default 50 ms.": "Durasi minimum untuk dilaporkan; bawaan 50 ms.",
-  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fastest: every hive to level 3; uses the most flowers.": "Minimum: bunga paling sedikit agar sarang bisa menampung madu Kekuatan Penyerbukan; paling lambat. Optimal: sedikit bunga tambahan di tempat yang paling menghemat waktu. Fastest: semua sarang ke level 3; paling banyak bunga.",
+  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fast (default): from Minimum, a hive goes up a level whenever that saves at least 1 minute. Fastest: every hive to level 3; uses the most flowers.": "Minimum: bunga paling sedikit agar sarang bisa menampung madu Kekuatan Penyerbukan; paling lambat. Optimal: sedikit bunga tambahan di tempat yang paling menghemat waktu. Fast (bawaan): dari Minimum, sarang naik satu level setiap kali itu menghemat setidaknya 1 menit. Fastest: semua sarang ke level 3; paling banyak bunga.",
   "Minutes between picking and planting runs. 1 by default.": "Menit di antara tiap putaran memetik dan menanam. Bawaan 1.",
   "Misc": "Lainnya",
   "Missing executor functions": "Fungsi executor yang hilang",

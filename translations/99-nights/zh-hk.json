@@ -1090,7 +1090,7 @@
   "Meteor Materials": "隕石材料",
   "Mine loaded nodes and deliver materials until they are within 90 studs of the anvil.": "開採已載入的礦點並運送材料，直至它們距離 Anvil 90 studs 以內。",
   "Minimum duration to report; default 50 ms.": "要報告的最短時間；預設 50 ms。",
-  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fastest: every hive to level 3; uses the most flowers.": "Minimum：用最少花朵令蜂巢裝得下授粉強度所需的蜂蜜；最慢。Optimal：在最省時間的地方多種幾朵花。Fastest：所有蜂巢升到 3 級；用花最多。",
+  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fast (default): from Minimum, a hive goes up a level whenever that saves at least 1 minute. Fastest: every hive to level 3; uses the most flowers.": "Minimum：用最少花朵令蜂巢裝得下授粉強度所需的蜂蜜；最慢。Optimal：在最省時間的地方多種幾朵花。Fast（預設）：由 Minimum 開始，每當升一級可節省至少 1 分鐘，就將該蜂巢升一級。Fastest：所有蜂巢升到 3 級；用花最多。",
   "Minutes between picking and planting runs. 1 by default.": "每次採花和種花之間的分鐘數。預設 1。",
   "Misc": "其他",
   "Missing executor functions": "缺少的執行器函數",

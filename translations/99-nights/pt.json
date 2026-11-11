@@ -1090,7 +1090,7 @@
   "Meteor Materials": "Materiais de meteoro",
   "Mine loaded nodes and deliver materials until they are within 90 studs of the anvil.": "Minerar nós carregados e entregar materiais até ficarem a 90 studs da bigorna.",
   "Minimum duration to report; default 50 ms.": "Duração mínima para reportar; padrão 50 ms.",
-  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fastest: every hive to level 3; uses the most flowers.": "Minimum: o mínimo de flores para as colmeias guardarem o mel da Força de Polinização; o mais lento. Optimal: algumas flores a mais onde economizam mais tempo. Fastest: todas as colmeias no nível 3; usa mais flores.",
+  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fast (default): from Minimum, a hive goes up a level whenever that saves at least 1 minute. Fastest: every hive to level 3; uses the most flowers.": "Minimum: o mínimo de flores para as colmeias guardarem o mel da Força de Polinização; o mais lento. Optimal: algumas flores a mais onde economizam mais tempo. Fast (padrão): a partir do Minimum, uma colmeia sobe um nível sempre que isso economiza pelo menos 1 minuto. Fastest: todas as colmeias no nível 3; usa mais flores.",
   "Minutes between picking and planting runs. 1 by default.": "Minutos entre cada colheita e plantio. 1 por padrão.",
   "Misc": "Diversos",
   "Missing executor functions": "Funções do executor ausentes",

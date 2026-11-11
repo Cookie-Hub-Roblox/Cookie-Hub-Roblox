@@ -1090,7 +1090,7 @@
   "Meteor Materials": "Материалы метеорита",
   "Mine loaded nodes and deliver materials until they are within 90 studs of the anvil.": "Добывать загруженные залежи и доставлять материалы, пока они не окажутся в 90 studs от наковальни.",
   "Minimum duration to report; default 50 ms.": "Минимальная длительность для отчёта; по умолчанию 50 мс.",
-  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fastest: every hive to level 3; uses the most flowers.": "Minimum: меньше всего цветов, чтобы ульи вместили мёд для силы опыления; медленнее всего. Optimal: немного больше цветов там, где они экономят больше всего времени. Fastest: все ульи до 3 уровня; тратит больше всего цветов.",
+  "Minimum: the fewest flowers that let the hives hold the Pollination Strength honey; slowest. Optimal: a few more flowers where they save the most time. Fast (default): from Minimum, a hive goes up a level whenever that saves at least 1 minute. Fastest: every hive to level 3; uses the most flowers.": "Minimum: меньше всего цветов, чтобы ульи вместили мёд для силы опыления; медленнее всего. Optimal: немного больше цветов там, где они экономят больше всего времени. Fast (по умолчанию): от Minimum улей поднимается на уровень, когда это экономит хотя бы 1 минуту. Fastest: все ульи до 3 уровня; тратит больше всего цветов.",
   "Minutes between picking and planting runs. 1 by default.": "Минут между сбором и посадкой. По умолчанию 1.",
   "Misc": "Разное",
   "Missing executor functions": "Отсутствующие функции эксплойта",
