@@ -16,7 +16,7 @@
 -- loaders/<VERSION>.luau next to this file, and a published version never changes.
 -- scripts/public-repo.mjs writes the line below for each branch (main = production,
 -- staging = staging); keep it the only line that differs between them.
-local VERSION, CHANNEL, BRANCH = "1.18", "staging", "staging"
+local VERSION, CHANNEL, BRANCH = "1.19", "staging", "staging"
 
 local url = "https://raw.githubusercontent.com/Cookie-Hub-Roblox/Cookie-Hub-Roblox/" .. BRANCH .. "/loaders/" .. VERSION .. ".luau"
 local source
