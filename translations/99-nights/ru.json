@@ -2656,6 +2656,7 @@
   "{1} returned {2}": "{1} вернул {2}",
   "{1} saved": "Сохранено: {1}",
   "{1} saved builds could not be read": "Не удалось прочитать сохранённые постройки: {1}",
+  "{1} saved from your blueprints on this device": "Сохранено с ваших чертежей на этом устройстве: {1}",
   "{1} selected": "Выбрано: {1}",
   "{1} selected, none loaded now": "выбрано: {1}, сейчас ничего не загружено",
   "{1} shared structure models (saved)": "Общих моделей построек: {1} (сохранены)",

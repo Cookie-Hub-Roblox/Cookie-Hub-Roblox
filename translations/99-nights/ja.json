@@ -2656,6 +2656,7 @@
   "{1} returned {2}": "{1} が {2} を返しました",
   "{1} saved": "{1}個保存",
   "{1} saved builds could not be read": "保存した建物 {1} 件を読み込めませんでした",
+  "{1} saved from your blueprints on this device": "あなたの設計図からこの端末に保存済み {1} 件",
   "{1} selected": "{1} 件選択中",
   "{1} selected, none loaded now": "{1} 個選択、今は読み込まれていません",
   "{1} shared structure models (saved)": "共有された建物モデル {1} 件（保存済み）",

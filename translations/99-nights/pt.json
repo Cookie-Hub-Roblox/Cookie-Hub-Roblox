@@ -2656,6 +2656,7 @@
   "{1} returned {2}": "{1} retornou {2}",
   "{1} saved": "{1} salvas",
   "{1} saved builds could not be read": "Não foi possível ler {1} construções salvas",
+  "{1} saved from your blueprints on this device": "{1} salvos dos seus projetos neste dispositivo",
   "{1} selected": "{1} selecionado",
   "{1} selected, none loaded now": "{1} selecionados, nenhum carregado agora",
   "{1} shared structure models (saved)": "{1} modelos de estruturas compartilhados (salvos)",

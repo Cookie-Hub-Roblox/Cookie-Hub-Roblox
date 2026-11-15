@@ -2656,6 +2656,7 @@
   "{1} returned {2}": "{1} mengembalikan {2}",
   "{1} saved": "{1} tersimpan",
   "{1} saved builds could not be read": "{1} bangunan tersimpan tidak dapat dibaca",
+  "{1} saved from your blueprints on this device": "{1} tersimpan dari blueprint kamu di perangkat ini",
   "{1} selected": "{1} dipilih",
   "{1} selected, none loaded now": "{1} dipilih, belum ada yang dimuat",
   "{1} shared structure models (saved)": "{1} model bangunan bersama (tersimpan)",

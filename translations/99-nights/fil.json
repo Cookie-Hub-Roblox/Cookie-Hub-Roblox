@@ -2656,6 +2656,7 @@
   "{1} returned {2}": "nagbalik ang {1} ng {2}",
   "{1} saved": "{1} naka-save",
   "{1} saved builds could not be read": "Hindi mabasa ang {1} naka-save na builds",
+  "{1} saved from your blueprints on this device": "{1} naka-save mula sa iyong mga blueprint sa device na ito",
   "{1} selected": "{1} ang napili",
   "{1} selected, none loaded now": "{1} ang napili, walang naka-load ngayon",
   "{1} shared structure models (saved)": "{1} shared structure models (naka-save)",

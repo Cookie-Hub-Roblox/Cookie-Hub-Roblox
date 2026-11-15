@@ -2656,6 +2656,7 @@
   "{1} returned {2}": "{1} trả về {2}",
   "{1} saved": "Đã lưu {1}",
   "{1} saved builds could not be read": "Không đọc được {1} công trình đã lưu",
+  "{1} saved from your blueprints on this device": "{1} mẫu đã lưu từ bản thiết kế của bạn trên thiết bị này",
   "{1} selected": "đã chọn {1}",
   "{1} selected, none loaded now": "Đã chọn {1}, hiện chưa có cái nào được tải",
   "{1} shared structure models (saved)": "{1} mẫu công trình được chia sẻ (đã lưu)",

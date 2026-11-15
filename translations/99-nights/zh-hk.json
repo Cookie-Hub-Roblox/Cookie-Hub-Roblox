@@ -2656,6 +2656,7 @@
   "{1} returned {2}": "{1} 傳回 {2}",
   "{1} saved": "已儲存 {1} 個",
   "{1} saved builds could not be read": "無法讀取 {1} 個已儲存的建築",
+  "{1} saved from your blueprints on this device": "已在此裝置儲存 {1} 個來自你藍圖的模型",
   "{1} selected": "已選 {1}",
   "{1} selected, none loaded now": "已揀 {1}，而家冇一件載入",
   "{1} shared structure models (saved)": "{1} 個共享建築模型（已儲存）",

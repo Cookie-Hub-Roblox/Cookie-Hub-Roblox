@@ -2656,6 +2656,7 @@
   "{1} returned {2}": "{1} ส่ง {2} กลับมา",
   "{1} saved": "บันทึกไว้ {1}",
   "{1} saved builds could not be read": "อ่านสิ่งก่อสร้างที่บันทึกไว้ {1} ชิ้นไม่ได้",
+  "{1} saved from your blueprints on this device": "บันทึกจากพิมพ์เขียวของคุณไว้ในอุปกรณ์นี้ {1} รายการ",
   "{1} selected": "เลือกแล้ว {1}",
   "{1} selected, none loaded now": "เลือกแล้ว {1} ตอนนี้ยังไม่มีที่โหลด",
   "{1} shared structure models (saved)": "โมเดลสิ่งก่อสร้างที่แชร์ {1} รายการ (บันทึกไว้)",
