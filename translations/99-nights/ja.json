@@ -2151,6 +2151,7 @@
   "The chosen build is not on Cookie Hub.": "選んだ建築は Cookie Hub にありません。",
   "The client owl chase event could not be loaded": "クライアントのフクロウ追跡イベントを読み込めませんでした",
   "The explosion failed: {1}": "爆発に失敗：{1}",
+  "The floor beside {1} has not loaded yet; not teleported. Try again in a moment.": "{1}のそばの床がまだ読み込まれていないため、テレポートしませんでした。少ししてからもう一度お試しください。",
   "The game could not show this structure.": "ゲームがこの建物を表示できませんでした。",
   "The game could not show this structure: {1}": "ゲームがこの建物を表示できませんでした: {1}",
   "The game did not craft {1}{2}; trying again in {3} s": "ゲームが {1}{2} をクラフトしませんでした。{3} 秒後に再試行します",

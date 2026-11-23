@@ -2151,6 +2151,7 @@
   "The chosen build is not on Cookie Hub.": "A construção escolhida não está no Cookie Hub.",
   "The client owl chase event could not be loaded": "Não foi possível carregar o evento de perseguição da coruja do cliente",
   "The explosion failed: {1}": "A explosão falhou: {1}",
+  "The floor beside {1} has not loaded yet; not teleported. Try again in a moment.": "O chão ao lado de {1} ainda não carregou; não teleportado. Tente de novo em instantes.",
   "The game could not show this structure.": "O jogo não conseguiu mostrar esta estrutura.",
   "The game could not show this structure: {1}": "O jogo não conseguiu mostrar esta estrutura: {1}",
   "The game did not craft {1}{2}; trying again in {3} s": "O jogo não fabricou {1}{2}; tentando de novo em {3} s",

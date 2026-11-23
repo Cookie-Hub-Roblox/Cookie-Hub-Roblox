@@ -2151,6 +2151,7 @@
   "The chosen build is not on Cookie Hub.": "สิ่งก่อสร้างที่เลือกไม่ได้อยู่บน Cookie Hub",
   "The client owl chase event could not be loaded": "โหลดอีเวนต์ไล่ล่านกฮูกฝั่งไคลเอนต์ไม่ได้",
   "The explosion failed: {1}": "การระเบิดล้มเหลว: {1}",
+  "The floor beside {1} has not loaded yet; not teleported. Try again in a moment.": "พื้นข้าง {1} ยังโหลดไม่เสร็จ จึงไม่ได้เทเลพอร์ต ลองใหม่อีกสักครู่",
   "The game could not show this structure.": "เกมแสดงสิ่งก่อสร้างนี้ไม่ได้",
   "The game could not show this structure: {1}": "เกมแสดงสิ่งก่อสร้างนี้ไม่ได้: {1}",
   "The game did not craft {1}{2}; trying again in {3} s": "เกมไม่ได้คราฟต์ {1}{2} จะลองใหม่ใน {3} วินาที",

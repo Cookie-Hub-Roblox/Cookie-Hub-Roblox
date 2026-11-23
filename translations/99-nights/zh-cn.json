@@ -2151,6 +2151,7 @@
   "The chosen build is not on Cookie Hub.": "所选建筑不在 Cookie Hub 上。",
   "The client owl chase event could not be loaded": "无法加载客户端猫头鹰追逐事件",
   "The explosion failed: {1}": "爆炸失败：{1}",
+  "The floor beside {1} has not loaded yet; not teleported. Try again in a moment.": "{1} 旁边的地面还没加载；未传送。请稍后再试。",
   "The game could not show this structure.": "游戏无法显示这个建筑。",
   "The game could not show this structure: {1}": "游戏无法显示这个建筑：{1}",
   "The game did not craft {1}{2}; trying again in {3} s": "游戏没有制作 {1}{2}；{3} 秒后重试",

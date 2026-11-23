@@ -2151,6 +2151,7 @@
   "The chosen build is not on Cookie Hub.": "Wala sa Cookie Hub ang napiling build.",
   "The client owl chase event could not be loaded": "Hindi ma-load ang client owl chase event",
   "The explosion failed: {1}": "Nabigo ang pagsabog: {1}",
+  "The floor beside {1} has not loaded yet; not teleported. Try again in a moment.": "Hindi pa naglo-load ang sahig sa tabi ni {1}; hindi na-teleport. Subukang muli maya-maya.",
   "The game could not show this structure.": "Hindi maipakita ng laro ang structure na ito.",
   "The game could not show this structure: {1}": "Hindi maipakita ng laro ang structure na ito: {1}",
   "The game did not craft {1}{2}; trying again in {3} s": "Hindi na-craft ng game ang {1}{2}; susubukan ulit sa {3} s",

@@ -2151,6 +2151,7 @@
   "The chosen build is not on Cookie Hub.": "Công trình đã chọn chưa có trên Cookie Hub.",
   "The client owl chase event could not be loaded": "Không thể tải sự kiện rượt đuổi cú của client",
   "The explosion failed: {1}": "Vụ nổ thất bại: {1}",
+  "The floor beside {1} has not loaded yet; not teleported. Try again in a moment.": "Sàn cạnh {1} chưa tải xong; chưa dịch chuyển. Hãy thử lại sau giây lát.",
   "The game could not show this structure.": "Trò chơi không thể hiển thị công trình này.",
   "The game could not show this structure: {1}": "Trò chơi không thể hiển thị công trình này: {1}",
   "The game did not craft {1}{2}; trying again in {3} s": "Game không chế tạo {1}{2}; thử lại sau {3} giây",

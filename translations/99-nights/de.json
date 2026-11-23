@@ -2151,6 +2151,7 @@
   "The chosen build is not on Cookie Hub.": "Der gewählte Bau ist nicht in Cookie Hub.",
   "The client owl chase event could not be loaded": "Das Client-Ereignis der Eulenjagd konnte nicht geladen werden",
   "The explosion failed: {1}": "Die Explosion ist fehlgeschlagen: {1}",
+  "The floor beside {1} has not loaded yet; not teleported. Try again in a moment.": "Der Boden neben {1} ist noch nicht geladen; nicht teleportiert. Versuche es gleich noch einmal.",
   "The game could not show this structure.": "Das Spiel konnte dieses Gebäude nicht anzeigen.",
   "The game could not show this structure: {1}": "Das Spiel konnte dieses Gebäude nicht anzeigen: {1}",
   "The game did not craft {1}{2}; trying again in {3} s": "Das Spiel hat {1}{2} nicht hergestellt; neuer Versuch in {3} s",

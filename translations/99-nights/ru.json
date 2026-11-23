@@ -2151,6 +2151,7 @@
   "The chosen build is not on Cookie Hub.": "Выбранной постройки нет в Cookie Hub.",
   "The client owl chase event could not be loaded": "Не удалось загрузить клиентское событие погони совы",
   "The explosion failed: {1}": "Взрыв не удался: {1}",
+  "The floor beside {1} has not loaded yet; not teleported. Try again in a moment.": "Пол рядом с {1} ещё не загрузился; телепорт отменён. Попробуйте ещё раз чуть позже.",
   "The game could not show this structure.": "Игра не смогла показать эту постройку.",
   "The game could not show this structure: {1}": "Игра не смогла показать эту постройку: {1}",
   "The game did not craft {1}{2}; trying again in {3} s": "Игра не создала {1}{2}; повтор через {3} с",
