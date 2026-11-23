@@ -2038,6 +2038,7 @@
   "Takes the selected meals into your hotbar from wherever they lie, not just from the pots. Select Stew in Foods to Eat to have Auto Eat eat them first.": "選択した料理を鍋以外からもホットバーへ取ります。Foods to Eat で Stew を選ぶと Auto Eat が先に食べます。",
   "Taking an alien corpse to the scanning station": "エイリアンの死体をスキャンステーションへ運んでいます",
   "Taking photo… {1}%": "撮影中… {1}%",
+  "Taking the axe out again": "斧を再び装備中",
   "Taking {1}": "{1}を取得中",
   "Taking {1} back with you": "{1}を持ち帰ります",
   "Taking {1} to eat it": "{1}を食べるために取得中",
