@@ -116,7 +116,7 @@
   "Anvil delivery cancelled": "Anvil 运送已取消",
   "Anvil hologram has no usable position": "Anvil 全息投影没有可用位置",
   "Anvil hologram is not loaded": "Anvil 全息投影未加载",
-  "Any class. Selected dishes take turns, skipping any whose food is not loaded; select none to leave the pot off. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots.": "任何职业。已选菜式轮流烹煮，未加载食材的菜式会被跳过；不选任何菜式则此锅保持关闭。Stew 用已选食物；Carrot Cake 用 Cake 和 2 个 Carrot。",
+  "Any class. Selected dishes take turns, skipping any whose food is not loaded; select none to leave the pot off. Stew takes the selected foods; Carrot Cake takes Cake and 2 Carrots; Candied Meat takes a Honeycomb, a Morsel, Steak or Ribs, and a selected food.": "任何职业。已选菜式轮流烹煮，未加载食材的菜式会被跳过；不选任何菜式则此锅保持关闭。Stew 用已选食物；Carrot Cake 用 Cake 和 2 个 Carrot。Candied Meat 用 1 个 Honeycomb、1 个 Morsel、Steak 或 Ribs，再加 1 个已选食物。",
   "Appearance": "外观",
   "Apply the saved jump power through game changes and respawns. Turning off restores the game's power and jump mode.": "在游戏变更及重生时持续应用已保存的跳跃力。关闭后会还原游戏的跳跃力及跳跃模式。",
   "Apply the saved speed, including while sprinting. Turning off restores the game's last observed speed.": "应用已保存的速度，包括冲刺时。关闭后会还原游戏最后观察到的速度。",
