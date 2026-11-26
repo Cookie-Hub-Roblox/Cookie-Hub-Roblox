@@ -15,8 +15,10 @@
 -- Cookie Hub loader. This file only picks which loader version runs: the loader itself is
 -- loaders/<VERSION>.luau next to this file, and a published version never changes.
 -- scripts/public-repo.mjs writes the line below for each branch (main = production,
--- staging = staging); keep it the only line that differs between them.
-local VERSION, CHANNEL, BRANCH = "1.20", "production", "main"
+-- staging = staging); keep it the only line that differs between them. A referral copy of
+-- this file (<source>.luau, from roblox-scripts/sources.json) also names its SOURCE.
+local VERSION, CHANNEL, BRANCH = "1.21", "production", "main"
+local SOURCE = nil
 
 local url = "https://raw.githubusercontent.com/Cookie-Hub-Roblox/Cookie-Hub-Roblox/" .. BRANCH .. "/loaders/" .. VERSION .. ".luau"
 local source
@@ -35,4 +37,4 @@ if type(source) ~= "string" or source == "" then
 end
 local chunk, failure = loadstring(source, "=CookieHubLoader")
 if not chunk then error("Cookie Hub: loader " .. VERSION .. " did not compile: " .. tostring(failure), 0) end
-return chunk({ channel = CHANNEL, version = VERSION })
+return chunk({ channel = CHANNEL, version = VERSION, source = SOURCE })
