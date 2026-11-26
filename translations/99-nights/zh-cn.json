@@ -2431,6 +2431,7 @@
   "Waiting to retry alien battery delivery": "正在等待重试运送 Alien Battery",
   "Waiting to retry at": "正在等待重试：",
   "Waiting to retry bell (attempts: {1})": "正在等待重试敲钟（尝试次数：{1}）",
+  "Waiting: Auto Thanksgiving is saving honey to pollinate": "等待中：自动感恩节正在攒蜂蜜用于授粉",
   "Waiting: {1} needs {2} honey but your hives hold {3}. Level up hives or choose a weaker strength": "等待中：{1} 需要 {2} 蜂蜜，但你的蜂巢只能装 {3}。请升级蜂巢或选择较弱的强度",
   "Waits for crashed UFOs, delivers batteries and scans alien corpses for more. Hold a weapon to defeat nearby aliens, or a fishing rod to fish the green pond (Default: ON).": "等待坠毁的 UFO，运送电池并扫描外星人尸体以取得更多。手持武器可击败附近的外星人，或手持鱼竿在绿色池塘钓鱼（默认：开）。",
   "Waits for opening, then enables Kill Aura and God Mode and equips the weapon with highest WeaponDamage / ToolCooldown just before entering; collects Floor 3 rewards.": "等待开放，然后在进入前启用 Kill Aura 和无敌模式，并装备 WeaponDamage / ToolCooldown 最高的武器；收集第 3 层奖励。",

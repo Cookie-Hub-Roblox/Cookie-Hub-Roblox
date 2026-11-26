@@ -2431,6 +2431,7 @@
   "Waiting to retry alien battery delivery": "Жду повтора доставки батареи пришельцев",
   "Waiting to retry at": "Жду повтора в",
   "Waiting to retry bell (attempts: {1})": "Жду повтора звона (попыток: {1})",
+  "Waiting: Auto Thanksgiving is saving honey to pollinate": "Ожидание: Авто-День благодарения копит мёд для опыления",
   "Waiting: {1} needs {2} honey but your hives hold {3}. Level up hives or choose a weaker strength": "Ожидание: для «{1}» нужно {2} мёда, а ульи вмещают {3}. Улучшите ульи или выберите силу слабее",
   "Waits for crashed UFOs, delivers batteries and scans alien corpses for more. Hold a weapon to defeat nearby aliens, or a fishing rod to fish the green pond (Default: ON).": "Ждёт разбившиеся НЛО, доставляет батареи и сканирует трупы пришельцев ради новых. Держите оружие, чтобы убивать ближайших пришельцев, или удочку, чтобы ловить рыбу в зелёном пруду (По умолчанию: ВКЛ).",
   "Waits for opening, then enables Kill Aura and God Mode and equips the weapon with highest WeaponDamage / ToolCooldown just before entering; collects Floor 3 rewards.": "Ждёт открытия, затем включает Kill Aura и God Mode и перед входом экипирует оружие с наибольшим WeaponDamage / ToolCooldown; собирает награды 3-го этажа.",

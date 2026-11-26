@@ -2431,6 +2431,7 @@
   "Waiting to retry alien battery delivery": "กำลังรอลองส่งแบตเตอรี่เอเลี่ยนอีกครั้ง",
   "Waiting to retry at": "กำลังรอลองใหม่เมื่อ",
   "Waiting to retry bell (attempts: {1})": "กำลังรอลองตีระฆังอีกครั้ง (ครั้งที่ลอง: {1})",
+  "Waiting: Auto Thanksgiving is saving honey to pollinate": "รอ: วันขอบคุณพระเจ้าอัตโนมัติกำลังเก็บน้ำผึ้งไว้ผสมเกสร",
   "Waiting: {1} needs {2} honey but your hives hold {3}. Level up hives or choose a weaker strength": "รอ: {1} ต้องใช้น้ำผึ้ง {2} แต่รังผึ้งจุได้ {3} อัปเลเวลรังผึ้งหรือเลือกความแรงที่ต่ำกว่า",
   "Waits for crashed UFOs, delivers batteries and scans alien corpses for more. Hold a weapon to defeat nearby aliens, or a fishing rod to fish the green pond (Default: ON).": "รอ UFO ตก ส่งแบตเตอรี่ และสแกนศพเอเลี่ยนเพื่อหาเพิ่ม ถืออาวุธเพื่อกำจัดเอเลี่ยนที่อยู่ใกล้ หรือถือคันเบ็ดเพื่อตกปลาที่บ่อสีเขียว (ค่าเริ่มต้น: เปิด)",
   "Waits for opening, then enables Kill Aura and God Mode and equips the weapon with highest WeaponDamage / ToolCooldown just before entering; collects Floor 3 rewards.": "รอให้เปิด แล้วเปิด Kill Aura และโหมดอมตะ และสวมอาวุธที่มี WeaponDamage / ToolCooldown สูงสุดก่อนเข้าไม่นาน เก็บรางวัลชั้น 3",

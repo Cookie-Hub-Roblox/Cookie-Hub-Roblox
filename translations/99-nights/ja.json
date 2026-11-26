@@ -2431,6 +2431,7 @@
   "Waiting to retry alien battery delivery": "Alien Battery の配送再試行を待っています",
   "Waiting to retry at": "再試行待ち：",
   "Waiting to retry bell (attempts: {1})": "ベルの再試行を待っています（試行回数：{1}）",
+  "Waiting: Auto Thanksgiving is saving honey to pollinate": "待機中: 自動感謝祭が受粉のためにハチミツを貯めています",
   "Waiting: {1} needs {2} honey but your hives hold {3}. Level up hives or choose a weaker strength": "待機中: {1}には{2}ハチミツが必要ですが、巣箱は{3}までしか貯められません。巣箱をレベルアップするか弱い強さを選んでください",
   "Waits for crashed UFOs, delivers batteries and scans alien corpses for more. Hold a weapon to defeat nearby aliens, or a fishing rod to fish the green pond (Default: ON).": "墜落した UFO を待ち、バッテリーを届け、エイリアンの死体をスキャンしてさらに集めます。武器を持つと近くのエイリアンを倒し、釣り竿を持つと緑の池で釣りをします（デフォルト：オン）。",
   "Waits for opening, then enables Kill Aura and God Mode and equips the weapon with highest WeaponDamage / ToolCooldown just before entering; collects Floor 3 rewards.": "開放を待ち、突入直前に Kill Aura とゴッドモードを有効にして WeaponDamage / ToolCooldown が最も高い武器を装備し、3階の報酬を回収します。",
