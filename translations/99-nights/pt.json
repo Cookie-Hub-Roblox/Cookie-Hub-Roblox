@@ -735,7 +735,7 @@
   "ESP Module Disabled": "Módulo ESP desativado",
   "ESP Module Enabled": "Módulo ESP ativado",
   "Each Torch widens the camp area by 5 studs, so walls can go further out. The game allows 10 per camp.": "Cada Torch aumenta a área do acampamento em 5 studs, então os muros podem ir mais longe. O jogo permite 10 por acampamento.",
-  "Each time you turn it on, runs Load Full Map and Max Campfire once, and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "Cada vez que você liga, executa uma vez Carregar Mapa Inteiro e Fogueira no Máximo, e mantém Fogueira no Nível Máximo Automático ligado enquanto estiver ligado (um fogo maior aumenta o acampamento e a borda do mapa). Ao desligar, Fogueira no Nível Máximo Automático volta ao jeito que você tinha. Desligado por padrão.",
+  "Each time you turn it on, runs Load Full Map and Max Campfire once (not again once the map has been loaded in this server), and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "Cada vez que você liga, executa uma vez Carregar Mapa Inteiro e Fogueira no Máximo (não de novo se o mapa já foi carregado neste servidor), e mantém Fogueira no Nível Máximo Automático ligado enquanto estiver ligado (um fogo maior aumenta o acampamento e a borda do mapa). Ao desligar, Fogueira no Nível Máximo Automático volta ao jeito que você tinha. Desligado por padrão.",
   "Eat selected foods in order.": "Coma as comidas selecionadas em ordem.",
   "Eating {1}": "Comendo {1}",
   "Emote": "Emote",

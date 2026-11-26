@@ -735,7 +735,7 @@
   "ESP Module Disabled": "Modul ESP dinonaktifkan",
   "ESP Module Enabled": "Modul ESP diaktifkan",
   "Each Torch widens the camp area by 5 studs, so walls can go further out. The game allows 10 per camp.": "Setiap Torch memperluas area kemah 5 studs, jadi dinding bisa dipasang lebih jauh. Game mengizinkan 10 per kemah.",
-  "Each time you turn it on, runs Load Full Map and Max Campfire once, and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "Setiap kali dinyalakan, menjalankan Muat Peta Penuh dan Api Unggun Maksimal sekali, dan menjaga Auto Api Unggun Level Maksimal tetap menyala selama aktif (api lebih besar memperluas kamp dan batas peta). Saat dimatikan, Auto Api Unggun Level Maksimal kembali seperti semula. Mati secara bawaan.",
+  "Each time you turn it on, runs Load Full Map and Max Campfire once (not again once the map has been loaded in this server), and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "Setiap kali dinyalakan, menjalankan Muat Peta Penuh dan Api Unggun Maksimal sekali (tidak diulang jika peta sudah dimuat di server ini), dan menjaga Auto Api Unggun Level Maksimal tetap menyala selama aktif (api lebih besar memperluas kamp dan batas peta). Saat dimatikan, Auto Api Unggun Level Maksimal kembali seperti semula. Mati secara bawaan.",
   "Eat selected foods in order.": "Makan makanan terpilih secara berurutan.",
   "Eating {1}": "Makan {1}",
   "Emote": "Emote",

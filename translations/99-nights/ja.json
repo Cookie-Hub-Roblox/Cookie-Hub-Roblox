@@ -735,7 +735,7 @@
   "ESP Module Disabled": "ESPモジュールを無効にしました",
   "ESP Module Enabled": "ESPモジュールを有効にしました",
   "Each Torch widens the camp area by 5 studs, so walls can go further out. The game allows 10 per camp.": "Torch 1 本ごとにキャンプ範囲が 5 studs 広がり、壁をもっと外側に置けます。ゲームではキャンプごとに 10 本までです。",
-  "Each time you turn it on, runs Load Full Map and Max Campfire once, and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "オンにするたびに全マップ読み込みとキャンプファイヤー最大化を1回実行し、オンの間は自動キャンプファイヤー最大レベルをオンに保ちます（火が大きいほどキャンプとマップの境界が広がります）。オフにすると自動キャンプファイヤー最大レベルは元の設定に戻ります。デフォルトはオフ。",
+  "Each time you turn it on, runs Load Full Map and Max Campfire once (not again once the map has been loaded in this server), and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "オンにするたびに全マップ読み込みとキャンプファイヤー最大化を1回実行し（このサーバーでマップを読み込み済みの場合は再実行しません）、オンの間は自動キャンプファイヤー最大レベルをオンに保ちます（火が大きいほどキャンプとマップの境界が広がります）。オフにすると自動キャンプファイヤー最大レベルは元の設定に戻ります。デフォルトはオフ。",
   "Eat selected foods in order.": "選択した食料を順番に食べます。",
   "Eating {1}": "{1}を食べています",
   "Emote": "エモート",

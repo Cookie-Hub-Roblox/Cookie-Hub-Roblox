@@ -735,7 +735,7 @@
   "ESP Module Disabled": "ESP 模组已停用",
   "ESP Module Enabled": "ESP 模组已启用",
   "Each Torch widens the camp area by 5 studs, so walls can go further out. The game allows 10 per camp.": "每个 Torch 会令营地范围扩大 5 studs，墙就可以放得更远。游戏每个营地最多 10 个。",
-  "Each time you turn it on, runs Load Full Map and Max Campfire once, and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "每次打开时运行一次加载全地图并营火升满级，打开期间保持自动营火升满级开启（火越大，营地和地图边界越大）。关闭时自动营火升满级恢复成你原来的设置。默认关闭。",
+  "Each time you turn it on, runs Load Full Map and Max Campfire once (not again once the map has been loaded in this server), and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "每次打开时运行一次加载全地图并营火升满级（本服务器已加载过地图时不再运行），打开期间保持自动营火升满级开启（火越大，营地和地图边界越大）。关闭时自动营火升满级恢复成你原来的设置。默认关闭。",
   "Eat selected foods in order.": "按顺序进食选定的食物。",
   "Eating {1}": "正在进食 {1}",
   "Emote": "表情动作",

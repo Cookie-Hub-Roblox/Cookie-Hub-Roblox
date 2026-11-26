@@ -735,7 +735,7 @@
   "ESP Module Disabled": "Đã tắt mô-đun ESP",
   "ESP Module Enabled": "Đã bật mô-đun ESP",
   "Each Torch widens the camp area by 5 studs, so walls can go further out. The game allows 10 per camp.": "Mỗi Torch mở rộng vùng trại thêm 5 studs, nên tường có thể đặt xa hơn. Trò chơi cho phép 10 cái mỗi trại.",
-  "Each time you turn it on, runs Load Full Map and Max Campfire once, and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "Mỗi lần bật, chạy Tải toàn bản đồ và lửa trại tối đa một lần, và giữ Tự động nâng lửa trại tối đa bật trong khi bật (lửa lớn hơn mở rộng trại và biên bản đồ). Khi tắt, Tự động nâng lửa trại tối đa trở về như bạn đã đặt. Mặc định tắt.",
+  "Each time you turn it on, runs Load Full Map and Max Campfire once (not again once the map has been loaded in this server), and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "Mỗi lần bật, chạy Tải toàn bản đồ và lửa trại tối đa một lần (không chạy lại nếu bản đồ đã được tải trong máy chủ này), và giữ Tự động nâng lửa trại tối đa bật trong khi bật (lửa lớn hơn mở rộng trại và biên bản đồ). Khi tắt, Tự động nâng lửa trại tối đa trở về như bạn đã đặt. Mặc định tắt.",
   "Eat selected foods in order.": "Ăn các món đã chọn theo thứ tự.",
   "Eating {1}": "Đang ăn {1}",
   "Emote": "Biểu cảm",

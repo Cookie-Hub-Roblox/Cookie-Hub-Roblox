@@ -735,7 +735,7 @@
   "ESP Module Disabled": "Модуль ESP отключён",
   "ESP Module Enabled": "Модуль ESP включён",
   "Each Torch widens the camp area by 5 studs, so walls can go further out. The game allows 10 per camp.": "Каждый Torch расширяет зону лагеря на 5 studs, так что стены можно ставить дальше. Игра разрешает 10 на лагерь.",
-  "Each time you turn it on, runs Load Full Map and Max Campfire once, and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "При каждом включении один раз запускает Загрузку всей карты и максимальный костёр и держит Авто-максимальный уровень костра включённым, пока включено (больший огонь расширяет лагерь и границу карты). При выключении Авто-максимальный уровень костра возвращается к твоей настройке. По умолчанию выключено.",
+  "Each time you turn it on, runs Load Full Map and Max Campfire once (not again once the map has been loaded in this server), and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "При каждом включении один раз запускает Загрузку всей карты и максимальный костёр (не повторяется, если карта на этом сервере уже загружена) и держит Авто-максимальный уровень костра включённым, пока включено (больший огонь расширяет лагерь и границу карты). При выключении Авто-максимальный уровень костра возвращается к твоей настройке. По умолчанию выключено.",
   "Eat selected foods in order.": "Ешьте выбранную еду по порядку.",
   "Eating {1}": "Едим {1}",
   "Emote": "Эмоция",

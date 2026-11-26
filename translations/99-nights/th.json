@@ -735,7 +735,7 @@
   "ESP Module Disabled": "ปิดโมดูล ESP แล้ว",
   "ESP Module Enabled": "เปิดโมดูล ESP แล้ว",
   "Each Torch widens the camp area by 5 studs, so walls can go further out. The game allows 10 per camp.": "Torch แต่ละอันขยายพื้นที่แคมป์ 5 studs จึงวางกำแพงได้ไกลขึ้น เกมให้วางได้ 10 อันต่อแคมป์",
-  "Each time you turn it on, runs Load Full Map and Max Campfire once, and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "ทุกครั้งที่เปิด จะรันโหลดทั้งแผนที่และกองไฟสูงสุดหนึ่งครั้ง และเปิดกองไฟเลเวลสูงสุดอัตโนมัติค้างไว้ขณะที่เปิดอยู่ (ไฟที่ใหญ่ขึ้นทำให้แคมป์และขอบแผนที่กว้างขึ้น) เมื่อปิด กองไฟเลเวลสูงสุดอัตโนมัติจะกลับเป็นแบบที่คุณตั้งไว้ ปิดเป็นค่าเริ่มต้น",
+  "Each time you turn it on, runs Load Full Map and Max Campfire once (not again once the map has been loaded in this server), and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "ทุกครั้งที่เปิด จะรันโหลดทั้งแผนที่และกองไฟสูงสุดหนึ่งครั้ง (ไม่รันซ้ำหากโหลดแผนที่ในเซิร์ฟเวอร์นี้แล้ว) และเปิดกองไฟเลเวลสูงสุดอัตโนมัติค้างไว้ขณะที่เปิดอยู่ (ไฟที่ใหญ่ขึ้นทำให้แคมป์และขอบแผนที่กว้างขึ้น) เมื่อปิด กองไฟเลเวลสูงสุดอัตโนมัติจะกลับเป็นแบบที่คุณตั้งไว้ ปิดเป็นค่าเริ่มต้น",
   "Eat selected foods in order.": "กินอาหารที่เลือกตามลำดับ",
   "Eating {1}": "กำลังกิน {1}",
   "Emote": "อีโมต",

@@ -735,7 +735,7 @@
   "ESP Module Disabled": "ESP-Modul deaktiviert",
   "ESP Module Enabled": "ESP-Modul aktiviert",
   "Each Torch widens the camp area by 5 studs, so walls can go further out. The game allows 10 per camp.": "Jede Torch vergrößert den Lagerbereich um 5 Studs, so können Mauern weiter draußen stehen. Das Spiel erlaubt 10 pro Lager.",
-  "Each time you turn it on, runs Load Full Map and Max Campfire once, and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "Führt bei jedem Einschalten einmal Ganze Karte laden und Lagerfeuer maximieren aus und hält Auto-Lagerfeuer auf Höchststufe an, solange es an ist (ein größeres Feuer vergrößert das Lager und die Kartengrenze). Beim Ausschalten wird Auto-Lagerfeuer auf Höchststufe wieder so eingestellt, wie du es hattest. Standardmäßig aus.",
+  "Each time you turn it on, runs Load Full Map and Max Campfire once (not again once the map has been loaded in this server), and keeps Auto Max Level Campfire on while it is on (a bigger fire grows the camp and the map border). Turning it off puts Auto Max Level Campfire back the way you had it. Off by default.": "Führt bei jedem Einschalten einmal Ganze Karte laden und Lagerfeuer maximieren aus (nicht erneut, wenn die Karte auf diesem Server schon geladen wurde) und hält Auto-Lagerfeuer auf Höchststufe an, solange es an ist (ein größeres Feuer vergrößert das Lager und die Kartengrenze). Beim Ausschalten wird Auto-Lagerfeuer auf Höchststufe wieder so eingestellt, wie du es hattest. Standardmäßig aus.",
   "Eat selected foods in order.": "Iss ausgewählte Lebensmittel der Reihe nach.",
   "Eating {1}": "Isst {1}",
   "Emote": "Emote",
